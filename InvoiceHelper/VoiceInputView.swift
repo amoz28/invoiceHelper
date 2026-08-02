@@ -15,108 +15,123 @@ struct VoiceInputView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 16) {
-                // Language selector
-                Picker("Language", selection: $voiceManager.currentLanguage) {
-                    ForEach(VoiceRecognitionManager.SupportedLanguage.allCases, id: \.self) { lang in
-                        Text(lang.displayName).tag(lang)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .padding()
-
-                // Recording indicator
+            VStack(spacing: 0) {
+                // Header
                 VStack(spacing: 12) {
-                    if voiceManager.isListening {
-                        HStack(spacing: 8) {
-                            ProgressView()
-                                .tint(AppTheme.infoBlue)
-                            Text("Listening...")
-                                .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(AppTheme.infoBlue)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(12)
-                        .background(AppTheme.infoBlue.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
-                    }
-
-                    // Transcription display
-                    if !voiceManager.recognizedText.isEmpty {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("You said:")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(.secondary)
-                            Text(voiceManager.recognizedText)
-                                .font(.body)
-                                .padding(12)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 8))
+                    Text("Create Invoice with Voice")
+                        .font(.title2.weight(.bold))
+                    
+                    // Language selector
+                    Picker("Language", selection: $voiceManager.currentLanguage) {
+                        ForEach(VoiceRecognitionManager.SupportedLanguage.allCases, id: \.self) { lang in
+                            Text(lang.displayName).tag(lang)
                         }
                     }
-
-                    // Translation display (if needed)
-                    if voiceManager.currentLanguage == .romanian && !translatedText.isEmpty {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Translation:")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(.secondary)
-                            Text(translatedText)
-                                .font(.body)
-                                .padding(12)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(AppTheme.infoBlue.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
-                        }
-                    }
+                    .pickerStyle(.segmented)
                 }
                 .padding()
+                .background(Color(.systemGroupedBackground))
 
-                // Parsed results preview
-                if let command = commandParser.lastParsedCommand, !command.items.isEmpty {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Preview:")
-                            .font(.subheadline.weight(.semibold))
-
-                        ForEach(Array(command.items.enumerated()), id: \.offset) { _, item in
-                            HStack(alignment: .top, spacing: 8) {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(item.description)
-                                        .font(.subheadline.weight(.semibold))
-                                    Text("\(formatQty(item.quantity)) × €\(formatPrice(item.unitPrice))")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-                                Spacer()
-                                Text("€\(formatPrice(item.amount))")
+                // Content
+                ScrollView {
+                    VStack(spacing: 16) {
+                        // Recording indicator
+                        if voiceManager.isListening {
+                            HStack(spacing: 8) {
+                                ProgressView()
+                                    .tint(AppTheme.infoBlue)
+                                Text("Listening...")
                                     .font(.subheadline.weight(.semibold))
+                                    .foregroundStyle(AppTheme.infoBlue)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(12)
+                            .background(AppTheme.infoBlue.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
+                        }
+
+                        // Transcription display
+                        if !voiceManager.recognizedText.isEmpty {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("You said:")
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundStyle(.secondary)
+                                Text(voiceManager.recognizedText)
+                                    .font(.body)
+                                    .padding(12)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 8))
+                            }
+                        }
+
+                        // Translation display (if needed)
+                        if voiceManager.currentLanguage == .romanian && !translatedText.isEmpty {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Translation:")
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundStyle(.secondary)
+                                Text(translatedText)
+                                    .font(.body)
+                                    .padding(12)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .background(AppTheme.infoBlue.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
+                            }
+                        }
+
+                        // Parsed results preview
+                        if let command = commandParser.lastParsedCommand, !command.items.isEmpty {
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Preview:")
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundStyle(.primary)
+
+                                ForEach(Array(command.items.enumerated()), id: \.offset) { _, item in
+                                    HStack(alignment: .top, spacing: 8) {
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text(item.description)
+                                                .font(.subheadline.weight(.semibold))
+                                            Text("\(formatQty(item.quantity)) × €\(formatPrice(item.unitPrice))")
+                                                .font(.caption)
+                                                .foregroundStyle(.secondary)
+                                        }
+                                        Spacer()
+                                        Text("€\(formatPrice(item.amount))")
+                                            .font(.subheadline.weight(.semibold))
+                                            .foregroundStyle(AppTheme.revenueGreen)
+                                    }
+                                    .padding(10)
+                                    .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 8))
+                                }
+                            }
+                        }
+
+                        // Error message
+                        if let error = voiceManager.error ?? translationService.error ?? commandParser.error {
+                            HStack(spacing: 8) {
+                                Image(systemName: "exclamationmark.circle.fill")
+                                    .foregroundStyle(.orange)
+                                Text(error)
+                                    .font(.caption)
+                                    .foregroundStyle(.orange)
                             }
                             .padding(10)
-                            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 8))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(Color.orange.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
                         }
+
+                        Spacer()
                     }
                     .padding()
                 }
-
-                // Error message
-                if let error = voiceManager.error ?? translationService.error ?? commandParser.error {
-                    HStack(spacing: 8) {
-                        Image(systemName: "exclamationmark.circle.fill")
-                            .foregroundStyle(.orange)
-                        Text(error)
-                            .font(.caption)
-                            .foregroundStyle(.orange)
-                    }
-                    .padding(10)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.orange.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
-                    .padding()
-                }
-
-                Spacer()
+                .background(Color(.systemGroupedBackground))
 
                 // Action buttons
                 VStack(spacing: 12) {
                     Button {
-                        Task { await voiceManager.startListening() }
+                        if voiceManager.isListening {
+                            voiceManager.stopListening()
+                        } else {
+                            Task { await voiceManager.startListening() }
+                        }
                     } label: {
                         HStack(spacing: 8) {
                             Image(systemName: voiceManager.isListening ? "stop.circle.fill" : "mic.circle.fill")
@@ -148,31 +163,23 @@ struct VoiceInputView: View {
                         .buttonStyle(.plain)
                     }
 
-                    Button("Cancel") { isPresented = false }
-                        .buttonStyle(.bordered)
-                        .frame(maxWidth: .infinity)
-                }
-                .padding()
-            }
-            .navigationTitle("Voice Invoice Input")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") {
+                    Button("Cancel") {
                         voiceManager.stopListening()
                         isPresented = false
                     }
+                    .buttonStyle(.bordered)
+                    .frame(maxWidth: .infinity)
                 }
+                .padding()
+                .background(Color(.systemGroupedBackground))
             }
             .onChange(of: voiceManager.recognizedText) { _, newText in
                 Task {
                     if voiceManager.currentLanguage == .romanian {
                         translatedText = await translationService.translateRomanianToEnglish(newText)
-                        let result = commandParser.parseCommand(translatedText)
-                        // Update UI with parsed results
+                        _ = commandParser.parseCommand(translatedText)
                     } else {
-                        let result = commandParser.parseCommand(newText)
-                        // Update UI with parsed results
+                        _ = commandParser.parseCommand(newText)
                     }
                 }
             }
