@@ -1,0 +1,336 @@
+{
+  "source": "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/EstimateViews.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Search estimates",
+        "location": {
+          "startingColumn": 58,
+          "startingLine": 36
+        }
+      },
+      {
+        "comment": "",
+        "key": "Estimates",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 37
+        }
+      },
+      {
+        "comment": "",
+        "key": "Status",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 9
+        }
+      },
+      {
+        "comment": "",
+        "key": "All",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 13
+        }
+      },
+      {
+        "comment": "",
+        "key": "New",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 40
+        }
+      },
+      {
+        "comment": "",
+        "key": "Error",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 143
+        }
+      },
+      {
+        "comment": "",
+        "key": "Estimate not found",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 140
+        }
+      },
+      {
+        "comment": "",
+        "key": "Line items",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 89
+        }
+      },
+      {
+        "comment": "",
+        "key": "Totals",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 100
+        }
+      },
+      {
+        "comment": "",
+        "key": "Notes",
+        "location": {
+          "startingColumn": 64,
+          "startingLine": 105
+        }
+      },
+      {
+        "comment": "",
+        "key": "Status",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 69
+        }
+      },
+      {
+        "comment": "",
+        "key": "Status",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 71
+        }
+      },
+      {
+        "comment": "",
+        "key": "Customer",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 86
+        }
+      },
+      {
+        "comment": "",
+        "key": "Valid until",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 87
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ × %@",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 93
+        }
+      },
+      {
+        "comment": "",
+        "key": "Subtotal",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 101
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tax (%@%%)",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 102
+        }
+      },
+      {
+        "comment": "",
+        "key": "Total",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 103
+        }
+      },
+      {
+        "comment": "",
+        "key": "Create invoice from estimate",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 108
+        }
+      },
+      {
+        "comment": "",
+        "key": "Edit estimate",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 122
+        }
+      },
+      {
+        "comment": "",
+        "key": "Delete",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 128
+        }
+      },
+      {
+        "comment": "",
+        "key": "OK",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 147
+        }
+      },
+      {
+        "comment": "",
+        "key": "Done",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 158
+        }
+      },
+      {
+        "comment": "",
+        "key": "New estimate",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 267
+        }
+      },
+      {
+        "comment": "",
+        "key": "Edit estimate",
+        "location": {
+          "startingColumn": 61,
+          "startingLine": 267
+        }
+      },
+      {
+        "comment": "",
+        "key": "Customer",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 222
+        }
+      },
+      {
+        "comment": "",
+        "key": "Validity & tax",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 234
+        }
+      },
+      {
+        "comment": "",
+        "key": "Line items",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 242
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add a customer first.",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 224
+        }
+      },
+      {
+        "comment": "",
+        "key": "Customer",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 226
+        }
+      },
+      {
+        "comment": "",
+        "key": "Select…",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 227
+        }
+      },
+      {
+        "comment": "",
+        "key": "Valid until",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 235
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tax rate %",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 236
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@%%",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 238
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add line",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 255
+        }
+      },
+      {
+        "comment": "",
+        "key": "Description",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 245
+        }
+      },
+      {
+        "comment": "",
+        "key": "Qty",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 247
+        }
+      },
+      {
+        "comment": "",
+        "key": "Unit price",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 249
+        }
+      },
+      {
+        "comment": "",
+        "key": "Notes (optional)",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 258
+        }
+      },
+      {
+        "comment": "",
+        "key": "Create estimate",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 263
+        }
+      },
+      {
+        "comment": "",
+        "key": "Save",
+        "location": {
+          "startingColumn": 62,
+          "startingLine": 263
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -1,0 +1,248 @@
+{
+  "source": "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/CustomerViews.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Search customers",
+        "location": {
+          "startingColumn": 58,
+          "startingLine": 14
+        }
+      },
+      {
+        "comment": "",
+        "key": "Customers",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 15
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 19
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld %@",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 46
+        }
+      },
+      {
+        "comment": "",
+        "key": "Contact",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 67
+        }
+      },
+      {
+        "comment": "",
+        "key": "Billing address",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 73
+        }
+      },
+      {
+        "comment": "",
+        "key": "Notes",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 79
+        }
+      },
+      {
+        "comment": "",
+        "key": "Name",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 68
+        }
+      },
+      {
+        "comment": "",
+        "key": "Display name",
+        "location": {
+          "startingColumn": 78,
+          "startingLine": 69
+        }
+      },
+      {
+        "comment": "",
+        "key": "Email",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 70
+        }
+      },
+      {
+        "comment": "",
+        "key": "Phone",
+        "location": {
+          "startingColumn": 72,
+          "startingLine": 71
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@, %@ %@",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 75
+        }
+      },
+      {
+        "comment": "",
+        "key": "Edit",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 85
+        }
+      },
+      {
+        "comment": "",
+        "key": "New customer",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 140
+        }
+      },
+      {
+        "comment": "",
+        "key": "Edit customer",
+        "location": {
+          "startingColumn": 61,
+          "startingLine": 140
+        }
+      },
+      {
+        "comment": "",
+        "key": "Customer",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 114
+        }
+      },
+      {
+        "comment": "",
+        "key": "Billing address",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 123
+        }
+      },
+      {
+        "comment": "",
+        "key": "Notes",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 130
+        }
+      },
+      {
+        "comment": "",
+        "key": "Name *",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 115
+        }
+      },
+      {
+        "comment": "",
+        "key": "Display name (optional)",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 116
+        }
+      },
+      {
+        "comment": "",
+        "key": "Email *",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 117
+        }
+      },
+      {
+        "comment": "",
+        "key": "Phone (optional)",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 120
+        }
+      },
+      {
+        "comment": "",
+        "key": "Street *",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 124
+        }
+      },
+      {
+        "comment": "",
+        "key": "City *",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 125
+        }
+      },
+      {
+        "comment": "",
+        "key": "State *",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 126
+        }
+      },
+      {
+        "comment": "",
+        "key": "Postal code *",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 127
+        }
+      },
+      {
+        "comment": "",
+        "key": "Country *",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 128
+        }
+      },
+      {
+        "comment": "",
+        "key": "Notes",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 131
+        }
+      },
+      {
+        "comment": "",
+        "key": "Create",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 136
+        }
+      },
+      {
+        "comment": "",
+        "key": "Save",
+        "location": {
+          "startingColumn": 53,
+          "startingLine": 136
+        }
+      }
+    ]
+  },
+  "version": 1
+}

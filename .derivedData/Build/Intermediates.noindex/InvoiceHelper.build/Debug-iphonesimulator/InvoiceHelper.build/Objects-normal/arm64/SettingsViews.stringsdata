@@ -1,0 +1,384 @@
+{
+  "source": "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/SettingsViews.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Settings",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 37
+        }
+      },
+      {
+        "comment": "",
+        "key": "Company",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 9
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sales",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 14
+        }
+      },
+      {
+        "comment": "",
+        "key": "Data",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 19
+        }
+      },
+      {
+        "comment": "",
+        "key": "About",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 32
+        }
+      },
+      {
+        "comment": "",
+        "key": "Edit company profile",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 10
+        }
+      },
+      {
+        "comment": "",
+        "key": "Estimates & quotes",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 15
+        }
+      },
+      {
+        "comment": "",
+        "key": "Export backup (JSON)",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 20
+        }
+      },
+      {
+        "comment": "",
+        "key": "Import backup (JSON)",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 23
+        }
+      },
+      {
+        "comment": "",
+        "key": "Log out",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 28
+        }
+      },
+      {
+        "comment": "",
+        "key": "App",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 33
+        }
+      },
+      {
+        "comment": "",
+        "key": "Version",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 34
+        }
+      },
+      {
+        "comment": "",
+        "key": "Company profile",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 104
+        }
+      },
+      {
+        "comment": "",
+        "key": "Company",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 66
+        }
+      },
+      {
+        "comment": "",
+        "key": "Billing address",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 75
+        }
+      },
+      {
+        "comment": "",
+        "key": "Bank details",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 82
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tax & currency",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 90
+        }
+      },
+      {
+        "comment": "",
+        "key": "Company name *",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 67
+        }
+      },
+      {
+        "comment": "",
+        "key": "Email *",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 68
+        }
+      },
+      {
+        "comment": "",
+        "key": "Phone *",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 71
+        }
+      },
+      {
+        "comment": "",
+        "key": "Website (optional)",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 73
+        }
+      },
+      {
+        "comment": "",
+        "key": "Street *",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 76
+        }
+      },
+      {
+        "comment": "",
+        "key": "City *",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 77
+        }
+      },
+      {
+        "comment": "",
+        "key": "State *",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 78
+        }
+      },
+      {
+        "comment": "",
+        "key": "Postal code *",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 79
+        }
+      },
+      {
+        "comment": "",
+        "key": "Country *",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 80
+        }
+      },
+      {
+        "comment": "",
+        "key": "Account name *",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 83
+        }
+      },
+      {
+        "comment": "",
+        "key": "Account number *",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 84
+        }
+      },
+      {
+        "comment": "",
+        "key": "Bank name *",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 85
+        }
+      },
+      {
+        "comment": "",
+        "key": "SWIFT *",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 86
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sort code (optional)",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 87
+        }
+      },
+      {
+        "comment": "",
+        "key": "IBAN (optional)",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 88
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tax ID (optional)",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 91
+        }
+      },
+      {
+        "comment": "",
+        "key": "Currency",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 92
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ — %@",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 94
+        }
+      },
+      {
+        "comment": "",
+        "key": "Save",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 100
+        }
+      },
+      {
+        "comment": "",
+        "key": "Export",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 196
+        }
+      },
+      {
+        "comment": "",
+        "key": "Error",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 197
+        }
+      },
+      {
+        "comment": "",
+        "key": "Export matches InvoiceHelper JSON shape (users without passwords, payments separate).",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 173
+        }
+      },
+      {
+        "comment": "",
+        "key": "Prepare export file",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 184
+        }
+      },
+      {
+        "comment": "",
+        "key": "Share backup file",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 180
+        }
+      },
+      {
+        "comment": "",
+        "key": "OK",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 201
+        }
+      },
+      {
+        "comment": "",
+        "key": "Import",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 227
+        }
+      },
+      {
+        "comment": "",
+        "key": "Import",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 253
+        }
+      },
+      {
+        "comment": "",
+        "key": "Import replaces all local data (same behavior as InvoiceHelper). You may need to log in again; imported users have empty passwords.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 216
+        }
+      },
+      {
+        "comment": "",
+        "key": "Choose JSON file…",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 221
+        }
+      },
+      {
+        "comment": "",
+        "key": "OK",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 257
+        }
+      }
+    ]
+  },
+  "version": 1
+}

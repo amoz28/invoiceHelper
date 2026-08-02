@@ -1,0 +1,48 @@
+{
+  "source": "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/MainTabView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Dashboard",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 9
+        }
+      },
+      {
+        "comment": "",
+        "key": "Customers",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 12
+        }
+      },
+      {
+        "comment": "",
+        "key": "Invoices",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 15
+        }
+      },
+      {
+        "comment": "",
+        "key": "Jobs",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 18
+        }
+      },
+      {
+        "comment": "",
+        "key": "Settings",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 21
+        }
+      }
+    ]
+  },
+  "version": 1
+}

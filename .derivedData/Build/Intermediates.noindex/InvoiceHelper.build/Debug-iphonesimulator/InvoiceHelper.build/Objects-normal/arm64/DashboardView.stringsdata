@@ -1,0 +1,64 @@
+{
+  "source": "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/DashboardView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Dashboard",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 83
+        }
+      },
+      {
+        "comment": "",
+        "key": "New invoice",
+        "location": {
+          "startingColumn": 37,
+          "startingLine": 95
+        }
+      },
+      {
+        "comment": "",
+        "key": "Company profile",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 120
+        }
+      },
+      {
+        "comment": "",
+        "key": "Here’s your business snapshot.",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 110
+        }
+      },
+      {
+        "comment": "",
+        "key": "Quick actions",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 192
+        }
+      },
+      {
+        "comment": "",
+        "key": "Recent invoices",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 225
+        }
+      },
+      {
+        "comment": "",
+        "key": "See all",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 228
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -1,0 +1,424 @@
+{
+  "source": "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/JobViews.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Jobs",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 83
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add job",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 78
+        }
+      },
+      {
+        "comment": "",
+        "key": "View",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 35
+        }
+      },
+      {
+        "comment": "",
+        "key": "From",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 116
+        }
+      },
+      {
+        "comment": "",
+        "key": "To",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 121
+        }
+      },
+      {
+        "comment": "",
+        "key": "Jobs for %@",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 140
+        }
+      },
+      {
+        "comment": "",
+        "key": "Clear",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 143
+        }
+      },
+      {
+        "comment": "",
+        "key": "Filter by date range",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 154
+        }
+      },
+      {
+        "comment": "",
+        "key": "From: %@",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 161
+        }
+      },
+      {
+        "comment": "",
+        "key": "To: %@",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 168
+        }
+      },
+      {
+        "comment": "",
+        "key": "Apply",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 174
+        }
+      },
+      {
+        "comment": "",
+        "key": "Clear",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 180
+        }
+      },
+      {
+        "comment": "",
+        "key": "Schedule your first job",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 232
+        }
+      },
+      {
+        "comment": "",
+        "key": "Recurring: %@",
+        "location": {
+          "startingColumn": 23,
+          "startingLine": 325
+        }
+      },
+      {
+        "comment": "",
+        "key": "Open in Maps",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 331
+        }
+      },
+      {
+        "comment": "",
+        "key": "Job",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 376
+        }
+      },
+      {
+        "comment": "",
+        "key": "Schedule",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 381
+        }
+      },
+      {
+        "comment": "",
+        "key": "Description",
+        "location": {
+          "startingColumn": 62,
+          "startingLine": 391
+        }
+      },
+      {
+        "comment": "",
+        "key": "Address",
+        "location": {
+          "startingColumn": 66,
+          "startingLine": 392
+        }
+      },
+      {
+        "comment": "",
+        "key": "Notes",
+        "location": {
+          "startingColumn": 56,
+          "startingLine": 393
+        }
+      },
+      {
+        "comment": "",
+        "key": "Title",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 377
+        }
+      },
+      {
+        "comment": "",
+        "key": "Customer",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 378
+        }
+      },
+      {
+        "comment": "",
+        "key": "Status",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 379
+        }
+      },
+      {
+        "comment": "",
+        "key": "Start",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 382
+        }
+      },
+      {
+        "comment": "",
+        "key": "End",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 383
+        }
+      },
+      {
+        "comment": "",
+        "key": "Recurring",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 385
+        }
+      },
+      {
+        "comment": "",
+        "key": "Next",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 387
+        }
+      },
+      {
+        "comment": "",
+        "key": "Reminder",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 395
+        }
+      },
+      {
+        "comment": "",
+        "key": "Edit",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 402
+        }
+      },
+      {
+        "comment": "",
+        "key": "New job",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 492
+        }
+      },
+      {
+        "comment": "",
+        "key": "Edit job",
+        "location": {
+          "startingColumn": 51,
+          "startingLine": 492
+        }
+      },
+      {
+        "comment": "",
+        "key": "Job",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 453
+        }
+      },
+      {
+        "comment": "",
+        "key": "Schedule",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 459
+        }
+      },
+      {
+        "comment": "",
+        "key": "Recurrence",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 468
+        }
+      },
+      {
+        "comment": "",
+        "key": "Extras",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 479
+        }
+      },
+      {
+        "comment": "",
+        "key": "Title *",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 454
+        }
+      },
+      {
+        "comment": "",
+        "key": "Customer name *",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 455
+        }
+      },
+      {
+        "comment": "",
+        "key": "Description (optional)",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 456
+        }
+      },
+      {
+        "comment": "",
+        "key": "Start",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 460
+        }
+      },
+      {
+        "comment": "",
+        "key": "End",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 461
+        }
+      },
+      {
+        "comment": "",
+        "key": "Status",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 462
+        }
+      },
+      {
+        "comment": "",
+        "key": "Recurring",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 469
+        }
+      },
+      {
+        "comment": "",
+        "key": "Frequency",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 471
+        }
+      },
+      {
+        "comment": "",
+        "key": "Monthly",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 472
+        }
+      },
+      {
+        "comment": "",
+        "key": "Every 6 months",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 473
+        }
+      },
+      {
+        "comment": "",
+        "key": "Annually",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 474
+        }
+      },
+      {
+        "comment": "",
+        "key": "None",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 475
+        }
+      },
+      {
+        "comment": "",
+        "key": "Customer address (optional)",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 480
+        }
+      },
+      {
+        "comment": "",
+        "key": "Notes (optional)",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 482
+        }
+      },
+      {
+        "comment": "",
+        "key": "Reminder",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 484
+        }
+      },
+      {
+        "comment": "",
+        "key": "Create job",
+        "location": {
+          "startingColumn": 37,
+          "startingLine": 488
+        }
+      },
+      {
+        "comment": "",
+        "key": "Save",
+        "location": {
+          "startingColumn": 52,
+          "startingLine": 488
+        }
+      }
+    ]
+  },
+  "version": 1
+}

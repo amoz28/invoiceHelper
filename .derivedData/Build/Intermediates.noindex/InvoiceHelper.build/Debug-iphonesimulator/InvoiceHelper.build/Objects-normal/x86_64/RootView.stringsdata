@@ -1,0 +1,16 @@
+{
+  "source": "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/RootView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Loading…",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 13
+        }
+      }
+    ]
+  },
+  "version": 1
+}

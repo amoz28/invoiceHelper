@@ -1,0 +1,363 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 63;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10000000000000000000001 /* InvoiceHelperApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* InvoiceHelperApp.swift */; };
+		A10000000000000000000002 /* InvoiceModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000002 /* InvoiceModels.swift */; };
+		A10000000000000000000003 /* InvoiceLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* InvoiceLogic.swift */; };
+		A10000000000000000000004 /* LocalPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000004 /* LocalPersistence.swift */; };
+		A10000000000000000000005 /* AppStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000005 /* AppStore.swift */; };
+		A10000000000000000000023 /* AppPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000023 /* AppPreferences.swift */; };
+		A10000000000000000000006 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000006 /* RootView.swift */; };
+		A10000000000000000000007 /* AuthViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000007 /* AuthViews.swift */; };
+		A10000000000000000000008 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000008 /* MainTabView.swift */; };
+		A10000000000000000000009 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000009 /* DashboardView.swift */; };
+		A1000000000000000000000A /* CustomerViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000A /* CustomerViews.swift */; };
+		A1000000000000000000000B /* InvoiceViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000B /* InvoiceViews.swift */; };
+		A1000000000000000000000C /* JobViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000C /* JobViews.swift */; };
+		A1000000000000000000000D /* SettingsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000D /* SettingsViews.swift */; };
+		A1000000000000000000000E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000E /* Assets.xcassets */; };
+		A10000000000000000000010 /* InvoicePDFGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000010 /* InvoicePDFGenerator.swift */; };
+		A10000000000000000000011 /* EstimateViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000011 /* EstimateViews.swift */; };
+		A10000000000000000000012 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000012 /* AppTheme.swift */; };
+		A10000000000000000000013 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000013 /* Haptics.swift */; };
+		A10000000000000000000014 /* JobSchedulingHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000014 /* JobSchedulingHelpers.swift */; };
+		A10000000000000000000015 /* JobsCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000015 /* JobsCalendarView.swift */; };
+		A10000000000000000000016 /* CompanyLogoSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000016 /* CompanyLogoSupport.swift */; };
+		A10000000000000000000017 /* CompanyLogoSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000017 /* CompanyLogoSection.swift */; };
+		A10000000000000000000018 /* SplashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000018 /* SplashScreenView.swift */; };
+		A10000000000000000000019 /* CloudSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000019 /* CloudSync.swift */; };
+		A10000000000000000000020 /* LegalViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000020 /* LegalViews.swift */; };
+		A10000000000000000000021 /* SavedItemsPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000021 /* SavedItemsPickerView.swift */; };
+		A10000000000000000000022 /* SavedJobTemplatesPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000022 /* SavedJobTemplatesPickerView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A20000000000000000000001 /* InvoiceHelperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvoiceHelperApp.swift; sourceTree = "<group>"; };
+		A20000000000000000000002 /* InvoiceModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvoiceModels.swift; sourceTree = "<group>"; };
+		A20000000000000000000003 /* InvoiceLogic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvoiceLogic.swift; sourceTree = "<group>"; };
+		A20000000000000000000004 /* LocalPersistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalPersistence.swift; sourceTree = "<group>"; };
+		A20000000000000000000005 /* AppStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStore.swift; sourceTree = "<group>"; };
+		A20000000000000000000023 /* AppPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPreferences.swift; sourceTree = "<group>"; };
+		A20000000000000000000006 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		A20000000000000000000007 /* AuthViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViews.swift; sourceTree = "<group>"; };
+		A20000000000000000000008 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		A20000000000000000000009 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		A2000000000000000000000A /* CustomerViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerViews.swift; sourceTree = "<group>"; };
+		A2000000000000000000000B /* InvoiceViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvoiceViews.swift; sourceTree = "<group>"; };
+		A2000000000000000000000C /* JobViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobViews.swift; sourceTree = "<group>"; };
+		A2000000000000000000000D /* SettingsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViews.swift; sourceTree = "<group>"; };
+		A2000000000000000000000E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A2000000000000000000000F /* InvoiceHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InvoiceHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A20000000000000000000010 /* InvoicePDFGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvoicePDFGenerator.swift; sourceTree = "<group>"; };
+		A20000000000000000000011 /* EstimateViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EstimateViews.swift; sourceTree = "<group>"; };
+		A20000000000000000000012 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
+		A20000000000000000000013 /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
+		A20000000000000000000014 /* JobSchedulingHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobSchedulingHelpers.swift; sourceTree = "<group>"; };
+		A20000000000000000000015 /* JobsCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobsCalendarView.swift; sourceTree = "<group>"; };
+		A20000000000000000000016 /* CompanyLogoSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyLogoSupport.swift; sourceTree = "<group>"; };
+		A20000000000000000000017 /* CompanyLogoSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyLogoSection.swift; sourceTree = "<group>"; };
+		A20000000000000000000018 /* SplashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreenView.swift; sourceTree = "<group>"; };
+		A20000000000000000000019 /* CloudSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudSync.swift; sourceTree = "<group>"; };
+		A20000000000000000000020 /* LegalViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalViews.swift; sourceTree = "<group>"; };
+		A20000000000000000000021 /* SavedItemsPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedItemsPickerView.swift; sourceTree = "<group>"; };
+		A20000000000000000000022 /* SavedJobTemplatesPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedJobTemplatesPickerView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A30000000000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A40000000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				A40000000000000000000002 /* InvoiceHelper */,
+				A40000000000000000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A40000000000000000000002 /* InvoiceHelper */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000001 /* InvoiceHelperApp.swift */,
+				A20000000000000000000002 /* InvoiceModels.swift */,
+				A20000000000000000000003 /* InvoiceLogic.swift */,
+				A20000000000000000000004 /* LocalPersistence.swift */,
+				A20000000000000000000005 /* AppStore.swift */,
+				A20000000000000000000023 /* AppPreferences.swift */,
+				A20000000000000000000019 /* CloudSync.swift */,
+				A20000000000000000000020 /* LegalViews.swift */,
+				A20000000000000000000021 /* SavedItemsPickerView.swift */,
+				A20000000000000000000022 /* SavedJobTemplatesPickerView.swift */,
+				A20000000000000000000006 /* RootView.swift */,
+				A20000000000000000000018 /* SplashScreenView.swift */,
+				A20000000000000000000007 /* AuthViews.swift */,
+				A20000000000000000000008 /* MainTabView.swift */,
+				A20000000000000000000009 /* DashboardView.swift */,
+				A2000000000000000000000A /* CustomerViews.swift */,
+				A2000000000000000000000B /* InvoiceViews.swift */,
+				A2000000000000000000000C /* JobViews.swift */,
+				A2000000000000000000000D /* SettingsViews.swift */,
+				A20000000000000000000010 /* InvoicePDFGenerator.swift */,
+				A20000000000000000000011 /* EstimateViews.swift */,
+				A20000000000000000000012 /* AppTheme.swift */,
+				A20000000000000000000013 /* Haptics.swift */,
+				A20000000000000000000014 /* JobSchedulingHelpers.swift */,
+				A20000000000000000000015 /* JobsCalendarView.swift */,
+				A20000000000000000000016 /* CompanyLogoSupport.swift */,
+				A20000000000000000000017 /* CompanyLogoSection.swift */,
+				A2000000000000000000000E /* Assets.xcassets */,
+			);
+			path = InvoiceHelper;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A2000000000000000000000F /* InvoiceHelper.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A50000000000000000000001 /* InvoiceHelper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A50000000000000000000002 /* Build configuration list for PBXNativeTarget "InvoiceHelper" */;
+			buildPhases = (
+				A30000000000000000000001 /* Sources */,
+				A30000000000000000000002 /* Frameworks */,
+				A30000000000000000000003 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = InvoiceHelper;
+			productName = InvoiceHelper;
+			productReference = A2000000000000000000000F /* InvoiceHelper.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A60000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					A50000000000000000000001 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = A60000000000000000000002 /* Build configuration list for PBXProject "InvoiceHelper" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A40000000000000000000001;
+			minimizedProjectReferenceProxies = 1;
+			productRefGroup = A40000000000000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A50000000000000000000001 /* InvoiceHelper */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A30000000000000000000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000000000000000000000E /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A30000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000000000000000000001 /* InvoiceHelperApp.swift in Sources */,
+				A10000000000000000000002 /* InvoiceModels.swift in Sources */,
+				A10000000000000000000003 /* InvoiceLogic.swift in Sources */,
+				A10000000000000000000004 /* LocalPersistence.swift in Sources */,
+				A10000000000000000000005 /* AppStore.swift in Sources */,
+				A10000000000000000000023 /* AppPreferences.swift in Sources */,
+				A10000000000000000000019 /* CloudSync.swift in Sources */,
+				A10000000000000000000020 /* LegalViews.swift in Sources */,
+				A10000000000000000000021 /* SavedItemsPickerView.swift in Sources */,
+				A10000000000000000000022 /* SavedJobTemplatesPickerView.swift in Sources */,
+				A10000000000000000000006 /* RootView.swift in Sources */,
+				A10000000000000000000018 /* SplashScreenView.swift in Sources */,
+				A10000000000000000000007 /* AuthViews.swift in Sources */,
+				A10000000000000000000008 /* MainTabView.swift in Sources */,
+				A10000000000000000000009 /* DashboardView.swift in Sources */,
+				A1000000000000000000000A /* CustomerViews.swift in Sources */,
+				A1000000000000000000000B /* InvoiceViews.swift in Sources */,
+				A1000000000000000000000C /* JobViews.swift in Sources */,
+				A1000000000000000000000D /* SettingsViews.swift in Sources */,
+				A10000000000000000000010 /* InvoicePDFGenerator.swift in Sources */,
+				A10000000000000000000011 /* EstimateViews.swift in Sources */,
+				A10000000000000000000012 /* AppTheme.swift in Sources */,
+				A10000000000000000000013 /* Haptics.swift in Sources */,
+				A10000000000000000000014 /* JobSchedulingHelpers.swift in Sources */,
+				A10000000000000000000015 /* JobsCalendarView.swift in Sources */,
+				A10000000000000000000016 /* CompanyLogoSupport.swift in Sources */,
+				A10000000000000000000017 /* CompanyLogoSection.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		B10000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		B10000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_OPTIMIZATION_LEVEL = s;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B10000000000000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = R4Q85U6BP2;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = InvoiceHelper;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "InvoiceHelper needs access to your photo library so you can choose a company logo for invoices and estimates.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.invoicehelper.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B10000000000000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = R4Q85U6BP2;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = InvoiceHelper;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "InvoiceHelper needs access to your photo library so you can choose a company logo for invoices and estimates.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.invoicehelper.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A50000000000000000000002 /* Build configuration list for PBXNativeTarget "InvoiceHelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B10000000000000000000003 /* Debug */,
+				B10000000000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A60000000000000000000002 /* Build configuration list for PBXProject "InvoiceHelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B10000000000000000000001 /* Debug */,
+				B10000000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A60000000000000000000001 /* Project object */;
+}

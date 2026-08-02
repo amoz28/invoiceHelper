@@ -1,0 +1,296 @@
+{
+  "source": "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/AuthViews.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "InvoiceHelper",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 10
+        }
+      },
+      {
+        "comment": "",
+        "key": "Invoices, estimates, jobs, and customers — stored on device.",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 12
+        }
+      },
+      {
+        "comment": "",
+        "key": "",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 18
+        }
+      },
+      {
+        "comment": "",
+        "key": "Log in",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 19
+        }
+      },
+      {
+        "comment": "",
+        "key": "Register",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 20
+        }
+      },
+      {
+        "comment": "",
+        "key": "Email",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 47
+        }
+      },
+      {
+        "comment": "",
+        "key": "Password",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 51
+        }
+      },
+      {
+        "comment": "",
+        "key": "Log in",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 60
+        }
+      },
+      {
+        "comment": "",
+        "key": "Company name",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 84
+        }
+      },
+      {
+        "comment": "",
+        "key": "Email",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 85
+        }
+      },
+      {
+        "comment": "",
+        "key": "Password",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 89
+        }
+      },
+      {
+        "comment": "",
+        "key": "Create account",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 98
+        }
+      },
+      {
+        "comment": "",
+        "key": "Company profile",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 176
+        }
+      },
+      {
+        "comment": "",
+        "key": "Company",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 136
+        }
+      },
+      {
+        "comment": "",
+        "key": "Billing address",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 145
+        }
+      },
+      {
+        "comment": "",
+        "key": "Bank details",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 152
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tax & currency",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 160
+        }
+      },
+      {
+        "comment": "",
+        "key": "Company name *",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 137
+        }
+      },
+      {
+        "comment": "",
+        "key": "Email *",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 138
+        }
+      },
+      {
+        "comment": "",
+        "key": "Phone *",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 141
+        }
+      },
+      {
+        "comment": "",
+        "key": "Website (optional)",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 143
+        }
+      },
+      {
+        "comment": "",
+        "key": "Street *",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 146
+        }
+      },
+      {
+        "comment": "",
+        "key": "City *",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 147
+        }
+      },
+      {
+        "comment": "",
+        "key": "State / region *",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 148
+        }
+      },
+      {
+        "comment": "",
+        "key": "Postal code *",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 149
+        }
+      },
+      {
+        "comment": "",
+        "key": "Country *",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 150
+        }
+      },
+      {
+        "comment": "",
+        "key": "Account name *",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 153
+        }
+      },
+      {
+        "comment": "",
+        "key": "Account number *",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 154
+        }
+      },
+      {
+        "comment": "",
+        "key": "Bank name *",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 155
+        }
+      },
+      {
+        "comment": "",
+        "key": "SWIFT *",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 156
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sort code (optional)",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 157
+        }
+      },
+      {
+        "comment": "",
+        "key": "IBAN (optional)",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 158
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tax ID (optional)",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 161
+        }
+      },
+      {
+        "comment": "",
+        "key": "Currency",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 162
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ — %@",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 164
+        }
+      },
+      {
+        "comment": "",
+        "key": "Save and continue",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 172
+        }
+      }
+    ]
+  },
+  "version": 1
+}

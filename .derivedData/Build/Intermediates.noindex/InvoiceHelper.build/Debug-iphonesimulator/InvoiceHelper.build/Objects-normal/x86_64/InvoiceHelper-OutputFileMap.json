@@ -1,0 +1,209 @@
+{
+  "" : {
+    "diagnostics" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceHelper-primary.dia",
+    "emit-module-dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceHelper-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceHelper-primary-emit-module.dia",
+    "pch" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceHelper-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceHelper-primary.swiftdeps"
+  },
+  "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "const-values" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/GeneratedAssetSymbols.swiftconstvalues",
+    "dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/GeneratedAssetSymbols.d",
+    "diagnostics" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/GeneratedAssetSymbols.dia",
+    "index-unit-output-path" : "/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/GeneratedAssetSymbols.o",
+    "swift-dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/GeneratedAssetSymbols.swiftdeps",
+    "swiftmodule" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/GeneratedAssetSymbols~partial.swiftmodule"
+  },
+  "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/AppStore.swift" : {
+    "const-values" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/AppStore.swiftconstvalues",
+    "dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/AppStore.d",
+    "diagnostics" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/AppStore.dia",
+    "index-unit-output-path" : "/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/AppStore.o",
+    "llvm-bc" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/AppStore.bc",
+    "object" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/AppStore.o",
+    "swift-dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/AppStore.swiftdeps",
+    "swiftmodule" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/AppStore~partial.swiftmodule"
+  },
+  "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/AppTheme.swift" : {
+    "const-values" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/AppTheme.swiftconstvalues",
+    "dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/AppTheme.d",
+    "diagnostics" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/AppTheme.dia",
+    "index-unit-output-path" : "/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/AppTheme.o",
+    "llvm-bc" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/AppTheme.bc",
+    "object" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/AppTheme.o",
+    "swift-dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/AppTheme.swiftdeps",
+    "swiftmodule" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/AppTheme~partial.swiftmodule"
+  },
+  "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/AuthViews.swift" : {
+    "const-values" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/AuthViews.swiftconstvalues",
+    "dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/AuthViews.d",
+    "diagnostics" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/AuthViews.dia",
+    "index-unit-output-path" : "/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/AuthViews.o",
+    "llvm-bc" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/AuthViews.bc",
+    "object" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/AuthViews.o",
+    "swift-dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/AuthViews.swiftdeps",
+    "swiftmodule" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/AuthViews~partial.swiftmodule"
+  },
+  "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/CustomerViews.swift" : {
+    "const-values" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/CustomerViews.swiftconstvalues",
+    "dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/CustomerViews.d",
+    "diagnostics" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/CustomerViews.dia",
+    "index-unit-output-path" : "/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/CustomerViews.o",
+    "llvm-bc" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/CustomerViews.bc",
+    "object" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/CustomerViews.o",
+    "swift-dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/CustomerViews.swiftdeps",
+    "swiftmodule" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/CustomerViews~partial.swiftmodule"
+  },
+  "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/DashboardView.swift" : {
+    "const-values" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/DashboardView.swiftconstvalues",
+    "dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/DashboardView.d",
+    "diagnostics" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/DashboardView.dia",
+    "index-unit-output-path" : "/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/DashboardView.o",
+    "llvm-bc" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/DashboardView.bc",
+    "object" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/DashboardView.o",
+    "swift-dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/DashboardView.swiftdeps",
+    "swiftmodule" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/DashboardView~partial.swiftmodule"
+  },
+  "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/EstimateViews.swift" : {
+    "const-values" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/EstimateViews.swiftconstvalues",
+    "dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/EstimateViews.d",
+    "diagnostics" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/EstimateViews.dia",
+    "index-unit-output-path" : "/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/EstimateViews.o",
+    "llvm-bc" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/EstimateViews.bc",
+    "object" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/EstimateViews.o",
+    "swift-dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/EstimateViews.swiftdeps",
+    "swiftmodule" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/EstimateViews~partial.swiftmodule"
+  },
+  "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/Haptics.swift" : {
+    "const-values" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/Haptics.swiftconstvalues",
+    "dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/Haptics.d",
+    "diagnostics" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/Haptics.dia",
+    "index-unit-output-path" : "/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/Haptics.o",
+    "llvm-bc" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/Haptics.bc",
+    "object" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/Haptics.o",
+    "swift-dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/Haptics.swiftdeps",
+    "swiftmodule" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/Haptics~partial.swiftmodule"
+  },
+  "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/InvoiceHelperApp.swift" : {
+    "const-values" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceHelperApp.swiftconstvalues",
+    "dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceHelperApp.d",
+    "diagnostics" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceHelperApp.dia",
+    "index-unit-output-path" : "/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceHelperApp.o",
+    "llvm-bc" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceHelperApp.bc",
+    "object" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceHelperApp.o",
+    "swift-dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceHelperApp.swiftdeps",
+    "swiftmodule" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceHelperApp~partial.swiftmodule"
+  },
+  "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/InvoiceLogic.swift" : {
+    "const-values" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceLogic.swiftconstvalues",
+    "dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceLogic.d",
+    "diagnostics" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceLogic.dia",
+    "index-unit-output-path" : "/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceLogic.o",
+    "llvm-bc" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceLogic.bc",
+    "object" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceLogic.o",
+    "swift-dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceLogic.swiftdeps",
+    "swiftmodule" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceLogic~partial.swiftmodule"
+  },
+  "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/InvoiceModels.swift" : {
+    "const-values" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceModels.swiftconstvalues",
+    "dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceModels.d",
+    "diagnostics" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceModels.dia",
+    "index-unit-output-path" : "/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceModels.o",
+    "llvm-bc" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceModels.bc",
+    "object" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceModels.o",
+    "swift-dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceModels.swiftdeps",
+    "swiftmodule" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceModels~partial.swiftmodule"
+  },
+  "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/InvoicePDFGenerator.swift" : {
+    "const-values" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoicePDFGenerator.swiftconstvalues",
+    "dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoicePDFGenerator.d",
+    "diagnostics" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoicePDFGenerator.dia",
+    "index-unit-output-path" : "/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoicePDFGenerator.o",
+    "llvm-bc" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoicePDFGenerator.bc",
+    "object" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoicePDFGenerator.o",
+    "swift-dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoicePDFGenerator.swiftdeps",
+    "swiftmodule" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoicePDFGenerator~partial.swiftmodule"
+  },
+  "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/InvoiceViews.swift" : {
+    "const-values" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceViews.swiftconstvalues",
+    "dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceViews.d",
+    "diagnostics" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceViews.dia",
+    "index-unit-output-path" : "/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceViews.o",
+    "llvm-bc" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceViews.bc",
+    "object" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceViews.o",
+    "swift-dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceViews.swiftdeps",
+    "swiftmodule" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/InvoiceViews~partial.swiftmodule"
+  },
+  "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/JobSchedulingHelpers.swift" : {
+    "const-values" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/JobSchedulingHelpers.swiftconstvalues",
+    "dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/JobSchedulingHelpers.d",
+    "diagnostics" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/JobSchedulingHelpers.dia",
+    "index-unit-output-path" : "/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/JobSchedulingHelpers.o",
+    "llvm-bc" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/JobSchedulingHelpers.bc",
+    "object" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/JobSchedulingHelpers.o",
+    "swift-dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/JobSchedulingHelpers.swiftdeps",
+    "swiftmodule" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/JobSchedulingHelpers~partial.swiftmodule"
+  },
+  "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/JobViews.swift" : {
+    "const-values" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/JobViews.swiftconstvalues",
+    "dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/JobViews.d",
+    "diagnostics" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/JobViews.dia",
+    "index-unit-output-path" : "/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/JobViews.o",
+    "llvm-bc" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/JobViews.bc",
+    "object" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/JobViews.o",
+    "swift-dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/JobViews.swiftdeps",
+    "swiftmodule" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/JobViews~partial.swiftmodule"
+  },
+  "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/JobsCalendarView.swift" : {
+    "const-values" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/JobsCalendarView.swiftconstvalues",
+    "dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/JobsCalendarView.d",
+    "diagnostics" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/JobsCalendarView.dia",
+    "index-unit-output-path" : "/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/JobsCalendarView.o",
+    "llvm-bc" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/JobsCalendarView.bc",
+    "object" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/JobsCalendarView.o",
+    "swift-dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/JobsCalendarView.swiftdeps",
+    "swiftmodule" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/JobsCalendarView~partial.swiftmodule"
+  },
+  "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/LocalPersistence.swift" : {
+    "const-values" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/LocalPersistence.swiftconstvalues",
+    "dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/LocalPersistence.d",
+    "diagnostics" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/LocalPersistence.dia",
+    "index-unit-output-path" : "/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/LocalPersistence.o",
+    "llvm-bc" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/LocalPersistence.bc",
+    "object" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/LocalPersistence.o",
+    "swift-dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/LocalPersistence.swiftdeps",
+    "swiftmodule" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/LocalPersistence~partial.swiftmodule"
+  },
+  "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/MainTabView.swift" : {
+    "const-values" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/MainTabView.swiftconstvalues",
+    "dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/MainTabView.d",
+    "diagnostics" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/MainTabView.dia",
+    "index-unit-output-path" : "/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/MainTabView.o",
+    "llvm-bc" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/MainTabView.bc",
+    "object" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/MainTabView.o",
+    "swift-dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/MainTabView.swiftdeps",
+    "swiftmodule" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/MainTabView~partial.swiftmodule"
+  },
+  "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/RootView.swift" : {
+    "const-values" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/RootView.swiftconstvalues",
+    "dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/RootView.d",
+    "diagnostics" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/RootView.dia",
+    "index-unit-output-path" : "/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/RootView.o",
+    "llvm-bc" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/RootView.bc",
+    "object" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/RootView.o",
+    "swift-dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/RootView.swiftdeps",
+    "swiftmodule" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/RootView~partial.swiftmodule"
+  },
+  "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/SettingsViews.swift" : {
+    "const-values" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/SettingsViews.swiftconstvalues",
+    "dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/SettingsViews.d",
+    "diagnostics" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/SettingsViews.dia",
+    "index-unit-output-path" : "/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/SettingsViews.o",
+    "llvm-bc" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/SettingsViews.bc",
+    "object" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/SettingsViews.o",
+    "swift-dependencies" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/SettingsViews.swiftdeps",
+    "swiftmodule" : "/Users/haymouz/Documents/Swift/InvoiceHelper/.derivedData/Build/Intermediates.noindex/InvoiceHelper.build/Debug-iphonesimulator/InvoiceHelper.build/Objects-normal/x86_64/SettingsViews~partial.swiftmodule"
+  }
+}

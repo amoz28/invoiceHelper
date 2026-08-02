@@ -1,0 +1,448 @@
+{
+  "source": "/Users/haymouz/Documents/Swift/InvoiceHelper/InvoiceHelper/InvoiceViews.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Search invoices",
+        "location": {
+          "startingColumn": 57,
+          "startingLine": 37
+        }
+      },
+      {
+        "comment": "",
+        "key": "Invoices",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 38
+        }
+      },
+      {
+        "comment": "",
+        "key": "Status",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 10
+        }
+      },
+      {
+        "comment": "",
+        "key": "All",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 14
+        }
+      },
+      {
+        "comment": "",
+        "key": "New",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 41
+        }
+      },
+      {
+        "comment": "",
+        "key": "Error",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 159
+        }
+      },
+      {
+        "comment": "",
+        "key": "Invoice not found",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 156
+        }
+      },
+      {
+        "comment": "",
+        "key": "Line items",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 75
+        }
+      },
+      {
+        "comment": "",
+        "key": "Totals",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 86
+        }
+      },
+      {
+        "comment": "",
+        "key": "Payments",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 92
+        }
+      },
+      {
+        "comment": "",
+        "key": "Notes",
+        "location": {
+          "startingColumn": 64,
+          "startingLine": 103
+        }
+      },
+      {
+        "comment": "",
+        "key": "Terms",
+        "location": {
+          "startingColumn": 64,
+          "startingLine": 104
+        }
+      },
+      {
+        "comment": "",
+        "key": "Mark as sent",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 117
+        }
+      },
+      {
+        "comment": "",
+        "key": "Edit invoice",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 128
+        }
+      },
+      {
+        "comment": "",
+        "key": "Delete",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 133
+        }
+      },
+      {
+        "comment": "",
+        "key": "Customer",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 70
+        }
+      },
+      {
+        "comment": "",
+        "key": "Status",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 71
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 72
+        }
+      },
+      {
+        "comment": "",
+        "key": "Due",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 73
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ × %@",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 79
+        }
+      },
+      {
+        "comment": "",
+        "key": "Subtotal",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 87
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tax (%@%%)",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 88
+        }
+      },
+      {
+        "comment": "",
+        "key": "Total",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 89
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ · %@",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 96
+        }
+      },
+      {
+        "comment": "",
+        "key": "Share PDF",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 109
+        }
+      },
+      {
+        "comment": "",
+        "key": "Share text summary",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 113
+        }
+      },
+      {
+        "comment": "",
+        "key": "Payment",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 148
+        }
+      },
+      {
+        "comment": "",
+        "key": "OK",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 163
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add payment",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 285
+        }
+      },
+      {
+        "comment": "",
+        "key": "Amount",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 268
+        }
+      },
+      {
+        "comment": "",
+        "key": "Method",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 270
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 275
+        }
+      },
+      {
+        "comment": "",
+        "key": "Notes (optional)",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 278
+        }
+      },
+      {
+        "comment": "",
+        "key": "Record payment",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 282
+        }
+      },
+      {
+        "comment": "",
+        "key": "Close",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 288
+        }
+      },
+      {
+        "comment": "",
+        "key": "New invoice",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 395
+        }
+      },
+      {
+        "comment": "",
+        "key": "Edit invoice",
+        "location": {
+          "startingColumn": 60,
+          "startingLine": 395
+        }
+      },
+      {
+        "comment": "",
+        "key": "Customer",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 345
+        }
+      },
+      {
+        "comment": "",
+        "key": "Dates & tax",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 357
+        }
+      },
+      {
+        "comment": "",
+        "key": "Line items",
+        "location": {
+          "startingColumn": 21,
+          "startingLine": 366
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add a customer first.",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 347
+        }
+      },
+      {
+        "comment": "",
+        "key": "Customer",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 349
+        }
+      },
+      {
+        "comment": "",
+        "key": "Select…",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 350
+        }
+      },
+      {
+        "comment": "",
+        "key": "Invoice date",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 358
+        }
+      },
+      {
+        "comment": "",
+        "key": "Due date",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 359
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tax rate %",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 360
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@%%",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 362
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add line",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 379
+        }
+      },
+      {
+        "comment": "",
+        "key": "Description",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 369
+        }
+      },
+      {
+        "comment": "",
+        "key": "Qty",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 371
+        }
+      },
+      {
+        "comment": "",
+        "key": "Unit price",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 373
+        }
+      },
+      {
+        "comment": "",
+        "key": "Notes (optional)",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 384
+        }
+      },
+      {
+        "comment": "",
+        "key": "Terms (optional)",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 386
+        }
+      },
+      {
+        "comment": "",
+        "key": "Create invoice",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 391
+        }
+      },
+      {
+        "comment": "",
+        "key": "Save",
+        "location": {
+          "startingColumn": 61,
+          "startingLine": 391
+        }
+      }
+    ]
+  },
+  "version": 1
+}
