@@ -748,6 +748,7 @@ struct InvoiceEditorView: View {
     @State private var errorMessage: String?
     @State private var addCustomerSheet: AddCustomerSheetToken?
     @State private var showSavedItemsPicker = false
+    @State private var showVoiceInput = false
 
     struct LineRow: Identifiable {
         let id: UUID
@@ -823,6 +824,11 @@ struct InvoiceEditorView: View {
                     lines.append(LineRow())
                 }
                 Button {
+                    showVoiceInput = true
+                } label: {
+                    Label("Add via voice", systemImage: "mic.circle.fill")
+                }
+                Button {
                     showSavedItemsPicker = true
                 } label: {
                     Label("Add from saved items", systemImage: "tray.and.arrow.down")
@@ -882,6 +888,19 @@ struct InvoiceEditorView: View {
                 }
                 .environmentObject(store)
             }
+        }
+        .sheet(isPresented: $showVoiceInput) {
+            VoiceInputView(
+                onItemsAdded: { items in
+                    VoiceInvoiceIntegration.addVoiceItems(items, to: &lines)
+                },
+                onNoteAdded: { note in
+                    VoiceInvoiceIntegration.addVoiceNote(note, to: &notes)
+                },
+                onTaxRateChanged: { rate in
+                    VoiceInvoiceIntegration.applyVoiceTaxRate(rate, to: &taxRate)
+                }
+            )
         }
         .onAppear {
             if mode == .edit, let id = invoiceId, let inv = store.invoices.first(where: { $0.id == id }) {

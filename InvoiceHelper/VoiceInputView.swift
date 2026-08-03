@@ -1,228 +1,305 @@
 import SwiftUI
 
+/// Dictation sheet used by the invoice editor and by the dashboard quick entry FAB.
 struct VoiceInputView: View {
-    @StateObject private var voiceManager = VoiceRecognitionManager()
-    @StateObject private var translationService = TranslationService()
-    @StateObject private var commandParser = VoiceCommandParser()
+    @StateObject private var voice = VoiceRecognitionManager()
+    @StateObject private var translator = TranslationService()
+    @StateObject private var parser = VoiceCommandParser()
 
-    @Binding var isPresented: Bool
+    @Environment(\.dismiss) private var dismiss
+
+    /// Called when the user accepts the parsed result. The sheet dismisses itself afterwards.
     var onItemsAdded: ([VoiceLineItem]) -> Void
     var onNoteAdded: (String) -> Void
     var onTaxRateChanged: (Double) -> Void
 
     @State private var translatedText = ""
-    @State private var showResults = false
+    @State private var parseTask: Task<Void, Never>?
+
+    private var textToParse: String {
+        voice.currentLanguage == .romanian && !translatedText.isEmpty ? translatedText : voice.recognizedText
+    }
+
+    private var parsed: VoiceCommandResult? {
+        guard let result = parser.lastParsedCommand, !result.isEmpty else { return nil }
+        return result
+    }
+
+    private var canApply: Bool {
+        guard let parsed else { return false }
+        switch parsed.action {
+        case .addItems:
+            return parsed.items.contains { $0.unitPrice > 0 && $0.quantity > 0 }
+        case .setTaxRate:
+            return parsed.taxRate != nil
+        case .setNotes:
+            return !(parsed.notes?.isEmpty ?? true)
+        case .unknown:
+            return false
+        }
+    }
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                // Header
-                VStack(spacing: 12) {
-                    Text("Create Invoice with Voice")
-                        .font(.title2.weight(.bold))
-                    
-                    // Language selector
-                    Picker("Language", selection: $voiceManager.currentLanguage) {
-                        ForEach(VoiceRecognitionManager.SupportedLanguage.allCases, id: \.self) { lang in
-                            Text(lang.displayName).tag(lang)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    Picker("Language", selection: Binding(
+                        get: { voice.currentLanguage },
+                        set: { voice.setLanguage($0) }
+                    )) {
+                        ForEach(VoiceRecognitionManager.SupportedLanguage.allCases) { language in
+                            Text(language.displayName).tag(language)
                         }
                     }
                     .pickerStyle(.segmented)
-                }
-                .padding()
-                .background(Color(.systemGroupedBackground))
 
-                // Content
-                ScrollView {
-                    VStack(spacing: 16) {
-                        // Recording indicator
-                        if voiceManager.isListening {
-                            HStack(spacing: 8) {
-                                ProgressView()
-                                    .tint(AppTheme.infoBlue)
-                                Text("Listening...")
-                                    .font(.subheadline.weight(.semibold))
-                                    .foregroundStyle(AppTheme.infoBlue)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(12)
-                            .background(AppTheme.infoBlue.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
-                        }
-
-                        // Transcription display
-                        if !voiceManager.recognizedText.isEmpty {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("You said:")
-                                    .font(.caption.weight(.semibold))
-                                    .foregroundStyle(.secondary)
-                                Text(voiceManager.recognizedText)
-                                    .font(.body)
-                                    .padding(12)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 8))
-                            }
-                        }
-
-                        // Translation display (if needed)
-                        if voiceManager.currentLanguage == .romanian && !translatedText.isEmpty {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("Translation:")
-                                    .font(.caption.weight(.semibold))
-                                    .foregroundStyle(.secondary)
-                                Text(translatedText)
-                                    .font(.body)
-                                    .padding(12)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .background(AppTheme.infoBlue.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
-                            }
-                        }
-
-                        // Parsed results preview
-                        if let command = commandParser.lastParsedCommand, !command.items.isEmpty {
-                            VStack(alignment: .leading, spacing: 12) {
-                                Text("Preview:")
-                                    .font(.subheadline.weight(.semibold))
-                                    .foregroundStyle(.primary)
-
-                                ForEach(Array(command.items.enumerated()), id: \.offset) { _, item in
-                                    HStack(alignment: .top, spacing: 8) {
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text(item.description)
-                                                .font(.subheadline.weight(.semibold))
-                                            Text("\(formatQty(item.quantity)) × €\(formatPrice(item.unitPrice))")
-                                                .font(.caption)
-                                                .foregroundStyle(.secondary)
-                                        }
-                                        Spacer()
-                                        Text("€\(formatPrice(item.amount))")
-                                            .font(.subheadline.weight(.semibold))
-                                            .foregroundStyle(AppTheme.revenueGreen)
-                                    }
-                                    .padding(10)
-                                    .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 8))
-                                }
-                            }
-                        }
-
-                        // Error message
-                        if let error = voiceManager.error ?? translationService.error ?? commandParser.error {
-                            HStack(spacing: 8) {
-                                Image(systemName: "exclamationmark.circle.fill")
-                                    .foregroundStyle(.orange)
-                                Text(error)
-                                    .font(.caption)
-                                    .foregroundStyle(.orange)
-                            }
-                            .padding(10)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(Color.orange.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
-                        }
-
-                        Spacer()
-                    }
-                    .padding()
-                }
-                .background(Color(.systemGroupedBackground))
-
-                // Action buttons
-                VStack(spacing: 12) {
-                    Button {
-                        if voiceManager.isListening {
-                            voiceManager.stopListening()
-                        } else {
-                            Task { await voiceManager.startListening() }
-                        }
-                    } label: {
+                    if voice.isListening {
                         HStack(spacing: 8) {
-                            Image(systemName: voiceManager.isListening ? "stop.circle.fill" : "mic.circle.fill")
-                                .font(.title3)
-                            Text(voiceManager.isListening ? "Stop recording" : "Start recording")
+                            ProgressView().tint(AppTheme.infoBlue)
+                            Text("Listening")
                                 .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(AppTheme.infoBlue)
                         }
                         .frame(maxWidth: .infinity)
                         .padding(12)
+                        .background(AppTheme.infoBlue.opacity(0.12), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    }
+
+                    if voice.recognizedText.isEmpty && !voice.isListening {
+                        hintCard
+                    }
+
+                    if !voice.recognizedText.isEmpty {
+                        labelledBlock(title: "You said", text: voice.recognizedText, tint: nil)
+                    }
+
+                    if voice.currentLanguage == .romanian && !translatedText.isEmpty {
+                        labelledBlock(title: "Translated", text: translatedText, tint: AppTheme.infoBlue)
+                    }
+
+                    if translator.isTranslating {
+                        HStack(spacing: 8) {
+                            ProgressView()
+                            Text("Translating")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+
+                    if let parsed {
+                        previewSection(parsed)
+                    }
+
+                    if let message = voice.error ?? parser.error {
+                        HStack(alignment: .top, spacing: 8) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundStyle(.orange)
+                            Text(message)
+                                .font(.caption)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(10)
+                        .background(Color.orange.opacity(0.12), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    }
+                }
+                .padding(16)
+            }
+            .safeAreaInset(edge: .bottom) {
+                VStack(spacing: 10) {
+                    Button {
+                        if voice.isListening {
+                            voice.stopListening()
+                        } else {
+                            Task { await voice.startListening() }
+                        }
+                        Haptics.light()
+                    } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: voice.isListening ? "stop.circle.fill" : "mic.circle.fill")
+                                .font(.title3.weight(.semibold))
+                            Text(voice.isListening ? "Stop" : "Start speaking")
+                                .font(.subheadline.weight(.semibold))
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 13)
                         .foregroundStyle(.white)
-                        .background(voiceManager.isListening ? Color.red : AppTheme.infoBlue, in: RoundedRectangle(cornerRadius: 12))
+                        .background(voice.isListening ? Color.red : AppTheme.infoBlue,
+                                    in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                     }
                     .buttonStyle(.plain)
 
-                    if !voiceManager.recognizedText.isEmpty && !commandParser.lastParsedCommand!.items.isEmpty {
-                        Button {
-                            addItemsAndClose()
-                        } label: {
-                            HStack(spacing: 8) {
-                                Image(systemName: "checkmark.circle.fill")
-                                Text("Add items to invoice")
-                                    .font(.subheadline.weight(.semibold))
-                            }
+                    Button {
+                        apply()
+                    } label: {
+                        Text("Add to invoice")
+                            .font(.subheadline.weight(.semibold))
                             .frame(maxWidth: .infinity)
-                            .padding(12)
+                            .padding(.vertical, 13)
                             .foregroundStyle(.white)
-                            .background(AppTheme.revenueGreen, in: RoundedRectangle(cornerRadius: 12))
-                        }
-                        .buttonStyle(.plain)
+                            .background(canApply ? AppTheme.revenueGreen : Color.gray.opacity(0.4),
+                                        in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                     }
-
+                    .buttonStyle(.plain)
+                    .disabled(!canApply)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(.bar)
+            }
+            .navigationTitle("Speak your invoice")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
-                        voiceManager.stopListening()
-                        isPresented = false
+                        voice.stopListening()
+                        dismiss()
                     }
-                    .buttonStyle(.bordered)
-                    .frame(maxWidth: .infinity)
                 }
-                .padding()
-                .background(Color(.systemGroupedBackground))
             }
-            .onChange(of: voiceManager.recognizedText) { _, newText in
-                Task {
-                    if voiceManager.currentLanguage == .romanian {
-                        translatedText = await translationService.translateRomanianToEnglish(newText)
-                        _ = commandParser.parseCommand(translatedText)
-                    } else {
-                        _ = commandParser.parseCommand(newText)
-                    }
-                }
+            .onChange(of: voice.recognizedText) { _, newValue in
+                scheduleParse(for: newValue)
+            }
+            .onDisappear {
+                parseTask?.cancel()
+                voice.stopListening()
             }
         }
     }
 
-    private func addItemsAndClose() {
-        guard let command = commandParser.lastParsedCommand else { return }
+    // MARK: - Pieces
 
-        switch command.action {
+    private var hintCard: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Try saying")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+            Text("Two hours web design at fifty")
+            Text("Set tax to twenty percent")
+            Text("Note, payment due within thirty days")
+        }
+        .font(.subheadline)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(12)
+        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+    }
+
+    private func labelledBlock(title: String, text: String, tint: Color?) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(title)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+            Text(text)
+                .font(.body)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(12)
+                .background((tint ?? Color(.secondarySystemGroupedBackground)).opacity(tint == nil ? 1 : 0.12),
+                            in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        }
+    }
+
+    @ViewBuilder
+    private func previewSection(_ result: VoiceCommandResult) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Preview")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+
+            switch result.action {
+            case .addItems:
+                ForEach(result.items) { item in
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(item.description)
+                                .font(.subheadline.weight(.semibold))
+                            Text("\(formatQty(item.quantity)) x \(formatMoney(item.unitPrice))")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer(minLength: 8)
+                        Text(formatMoney(item.amount))
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(item.unitPrice > 0 ? AppTheme.revenueGreen : .secondary)
+                    }
+                    .padding(10)
+                    .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+            case .setTaxRate:
+                if let rate = result.taxRate {
+                    Text("Tax rate \(formatQty(rate))%")
+                        .font(.subheadline.weight(.semibold))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(10)
+                        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+            case .setNotes:
+                if let note = result.notes {
+                    Text(note)
+                        .font(.subheadline)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(10)
+                        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+            case .unknown:
+                EmptyView()
+            }
+        }
+    }
+
+    // MARK: - Behaviour
+
+    /// Debounced so we do not translate on every partial dictation result.
+    private func scheduleParse(for text: String) {
+        parseTask?.cancel()
+        guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            translatedText = ""
+            parser.lastParsedCommand = nil
+            return
+        }
+
+        parseTask = Task {
+            try? await Task.sleep(nanoseconds: 500_000_000)
+            guard !Task.isCancelled else { return }
+
+            if voice.currentLanguage == .romanian {
+                let english = await translator.translateRomanianToEnglish(text)
+                guard !Task.isCancelled else { return }
+                translatedText = english
+                parser.parseCommand(english)
+            } else {
+                translatedText = ""
+                parser.parseCommand(text)
+            }
+        }
+    }
+
+    private func apply() {
+        guard let result = parser.lastParsedCommand else { return }
+
+        switch result.action {
         case .addItems:
-            onItemsAdded(command.items)
+            let usable = result.items.filter { $0.quantity > 0 && $0.unitPrice > 0 }
+            guard !usable.isEmpty else { return }
+            onItemsAdded(usable)
         case .setNotes:
-            if let notes = command.notes {
-                onNoteAdded(notes)
-            }
+            guard let note = result.notes, !note.isEmpty else { return }
+            onNoteAdded(note)
         case .setTaxRate:
-            if let taxRate = command.taxRate {
-                onTaxRateChanged(taxRate)
-            }
+            guard let rate = result.taxRate else { return }
+            onTaxRateChanged(rate)
         case .unknown:
-            break
+            return
         }
 
-        voiceManager.stopListening()
-        isPresented = false
+        voice.stopListening()
+        dismiss()
     }
 
-    private func formatQty(_ v: Double) -> String {
-        v == floor(v) ? String(format: "%.0f", v) : String(format: "%.2f", v)
+    private func formatQty(_ value: Double) -> String {
+        value == value.rounded() ? String(format: "%.0f", value) : String(format: "%.2f", value)
     }
 
-    private func formatPrice(_ v: Double) -> String {
-        String(format: "%.2f", v)
+    private func formatMoney(_ value: Double) -> String {
+        String(format: "%.2f", value)
     }
-}
-
-#Preview {
-    @State var isPresented = true
-    return VoiceInputView(
-        isPresented: $isPresented,
-        onItemsAdded: { _ in },
-        onNoteAdded: { _ in },
-        onTaxRateChanged: { _ in }
-    )
 }

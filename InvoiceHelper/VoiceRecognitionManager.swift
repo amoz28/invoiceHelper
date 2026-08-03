@@ -2,124 +2,161 @@ import Foundation
 import Speech
 import AVFoundation
 
+/// Wraps `SFSpeechRecognizer` for on-device dictation in English and Romanian.
 @MainActor
 final class VoiceRecognitionManager: NSObject, ObservableObject {
+    enum SupportedLanguage: String, CaseIterable, Identifiable {
+        case english = "en-GB"
+        case romanian = "ro-RO"
+
+        var id: String { rawValue }
+
+        var displayName: String {
+            switch self {
+            case .english: return "English"
+            case .romanian: return "Romanian"
+            }
+        }
+    }
+
     @Published var isListening = false
     @Published var recognizedText = ""
     @Published var error: String?
     @Published var currentLanguage: SupportedLanguage = .english
 
-    private let speechRecognizer: SFSpeechRecognizer?
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine = AVAudioEngine()
 
-    enum SupportedLanguage: String, CaseIterable {
-        case english = "en-US"
-        case romanian = "ro-RO"
-
-        var displayName: String {
-            switch self {
-            case .english: "English"
-            case .romanian: "Romanian"
+    /// Asks for speech + microphone permission. Safe to call repeatedly.
+    func requestPermissions() async -> Bool {
+        let speechGranted = await withCheckedContinuation { continuation in
+            SFSpeechRecognizer.requestAuthorization { status in
+                continuation.resume(returning: status == .authorized)
             }
         }
-    }
+        guard speechGranted else {
+            error = "Speech recognition permission was denied. Enable it in Settings, Privacy, Speech Recognition."
+            return false
+        }
 
-    override init() {
-        self.speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: SupportedLanguage.english.rawValue))
-        super.init()
-        requestMicrophoneAuthorization()
-    }
-
-    /// Request microphone permission from the user
-    private func requestMicrophoneAuthorization() {
-        AVAudioApplication.requestRecordPermission { granted in
-            DispatchQueue.main.async {
-                if !granted {
-                    self.error = "Microphone permission denied. Please enable it in Settings."
+        let micGranted = await withCheckedContinuation { continuation in
+            if #available(iOS 17.0, *) {
+                AVAudioApplication.requestRecordPermission { granted in
+                    continuation.resume(returning: granted)
+                }
+            } else {
+                AVAudioSession.sharedInstance().requestRecordPermission { granted in
+                    continuation.resume(returning: granted)
                 }
             }
         }
+        guard micGranted else {
+            error = "Microphone permission was denied. Enable it in Settings, Privacy, Microphone."
+            return false
+        }
+
+        return true
     }
 
-    /// Start listening for voice input
     func startListening() async {
-        error = nil
         guard !isListening else { return }
+        error = nil
+        recognizedText = ""
 
-        let audioSession = AVAudioSession.sharedInstance()
+        guard await requestPermissions() else { return }
+
+        let locale = Locale(identifier: currentLanguage.rawValue)
+        guard let recognizer = SFSpeechRecognizer(locale: locale) else {
+            error = "\(currentLanguage.displayName) is not supported for dictation on this device."
+            return
+        }
+        guard recognizer.isAvailable else {
+            error = "\(currentLanguage.displayName) dictation is not available right now. Check the language is downloaded in Settings."
+            return
+        }
+
+        let session = AVAudioSession.sharedInstance()
         do {
-            try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
-            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+            try session.setCategory(.record, mode: .measurement, options: .duckOthers)
+            try session.setActive(true, options: .notifyOthersOnDeactivation)
         } catch {
-            self.error = "Audio session error: \(error.localizedDescription)"
+            self.error = "Could not start audio: \(error.localizedDescription)"
             return
         }
 
-        guard SFSpeechRecognizer.authorizationStatus() == .authorized else {
-            error = "Speech recognition authorization required"
-            return
-        }
-
-        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        guard let recognitionRequest = recognitionRequest else {
-            error = "Unable to create recognition request"
-            return
-        }
-
-        recognitionRequest.shouldReportPartialResults = true
+        let request = SFSpeechAudioBufferRecognitionRequest()
+        request.shouldReportPartialResults = true
+        // Keeps dictation working with no network where the device supports it.
+        request.requiresOnDeviceRecognition = recognizer.supportsOnDeviceRecognition
+        recognitionRequest = request
 
         let inputNode = audioEngine.inputNode
-        let recordingFormat = inputNode.outputFormat(forBus: 0)!
+        let format = inputNode.outputFormat(forBus: 0)
+        guard format.sampleRate > 0 else {
+            self.error = "No audio input available."
+            teardownAudio()
+            return
+        }
 
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, _ in
-            recognitionRequest.append(buffer)
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: format) { buffer, _ in
+            request.append(buffer)
         }
 
         audioEngine.prepare()
         do {
             try audioEngine.start()
-            isListening = true
-            recognizedText = ""
+        } catch {
+            self.error = "Could not start recording: \(error.localizedDescription)"
+            teardownAudio()
+            return
+        }
 
-            let locale = Locale(identifier: currentLanguage.rawValue)
-            let recognizer = SFSpeechRecognizer(locale: locale) ?? SFSpeechRecognizer()!
+        isListening = true
 
-            recognitionTask = recognizer.recognitionTask(with: recognitionRequest) { result, error in
-                DispatchQueue.main.async {
-                    if let result = result {
-                        self.recognizedText = result.bestTranscription.formattedString
+        recognitionTask = recognizer.recognitionTask(with: request) { [weak self] result, taskError in
+            Task { @MainActor in
+                guard let self else { return }
+                if let result {
+                    self.recognizedText = result.bestTranscription.formattedString
+                    if result.isFinal { self.stopListening() }
+                }
+                if let taskError {
+                    // A cancelled task is expected when the user taps Stop.
+                    let nsError = taskError as NSError
+                    let userCancelled = nsError.domain == "kAFAssistantErrorDomain" && nsError.code == 216
+                    if !userCancelled && self.recognizedText.isEmpty {
+                        self.error = taskError.localizedDescription
                     }
-
-                    if let error = error {
-                        self.error = error.localizedDescription
-                        self.stopListening()
-                    }
-
-                    if let isFinal = result?.isFinal, isFinal {
-                        self.stopListening()
-                    }
+                    self.stopListening()
                 }
             }
-        } catch {
-            self.error = "Audio engine error: \(error.localizedDescription)"
         }
     }
 
-    /// Stop listening and clean up
     func stopListening() {
+        guard isListening || recognitionTask != nil else { return }
         isListening = false
-        audioEngine.stop()
-        audioEngine.inputNode.removeTap(onBus: 0)
         recognitionRequest?.endAudio()
         recognitionTask?.cancel()
         recognitionTask = nil
         recognitionRequest = nil
+        teardownAudio()
     }
 
-    /// Change the recognition language
+    private func teardownAudio() {
+        if audioEngine.isRunning {
+            audioEngine.stop()
+        }
+        audioEngine.inputNode.removeTap(onBus: 0)
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+    }
+
     func setLanguage(_ language: SupportedLanguage) {
+        guard language != currentLanguage else { return }
+        stopListening()
         currentLanguage = language
+        recognizedText = ""
+        error = nil
     }
 }

@@ -1,127 +1,95 @@
 import Foundation
 
+/// Romanian to English translation. Tries a free online endpoint first, then falls back to a
+/// small built in glossary so the feature still works with no network.
 @MainActor
 final class TranslationService: ObservableObject {
     @Published var isTranslating = false
-    @Published var error: String?
+    @Published var usedOfflineFallback = false
 
-    /// Simple offline translation dictionary for common invoice terms (Romanian to English)
-    private let offlineTranslations: [String: String] = [
+    private static let glossary: [String: String] = [
         // Numbers
-        "unu": "one",
-        "doi": "two",
-        "trei": "three",
-        "patru": "four",
-        "cinci": "five",
-        "sase": "six",
-        "sapte": "seven",
-        "opt": "eight",
-        "noua": "nine",
-        "zece": "ten",
-        "douazeci": "twenty",
-        "treizeci": "thirty",
-        "patruzeci": "forty",
-        "cincizeci": "fifty",
-        "suta": "hundred",
-        "mie": "thousand",
+        "unu": "1", "una": "1", "doi": "2", "doua": "2", "două": "2", "trei": "3",
+        "patru": "4", "cinci": "5", "sase": "6", "șase": "6", "sapte": "7", "șapte": "7",
+        "opt": "8", "noua": "9", "nouă": "9", "zece": "10",
+        "douazeci": "20", "douăzeci": "20", "treizeci": "30", "patruzeci": "40",
+        "cincizeci": "50", "saizeci": "60", "șaizeci": "60", "suta": "100", "sută": "100",
 
-        // Common invoice terms
-        "articol": "item",
-        "descriere": "description",
-        "cantitate": "quantity",
-        "pret": "price",
-        "taxa": "tax",
-        "total": "total",
-        "subtotal": "subtotal",
-        "client": "customer",
-        "factura": "invoice",
-        "data": "date",
-        "scadenta": "due date",
-        "plata": "payment",
-        "platit": "paid",
-        "neplătit": "unpaid",
-        "parțial": "partial",
-        "note": "notes",
-        "termeni": "terms",
-        "adresa": "address",
-        "telefon": "phone",
-        "email": "email",
-        "moneda": "currency",
+        // Invoice vocabulary
+        "factura": "invoice", "factură": "invoice", "articol": "item", "articole": "items",
+        "descriere": "description", "cantitate": "quantity", "bucata": "unit", "bucată": "unit",
+        "pret": "price", "preț": "price", "taxa": "tax", "taxă": "tax", "tva": "tax",
+        "total": "total", "subtotal": "subtotal", "client": "customer", "clientul": "customer",
+        "data": "date", "scadenta": "due", "scadență": "due", "plata": "payment", "plată": "payment",
+        "platit": "paid", "plătit": "paid", "nota": "note", "notă": "note", "note": "note",
+        "observatii": "note", "observații": "note", "termeni": "terms", "moneda": "currency",
 
-        // Common actions
-        "adauga": "add",
-        "sterge": "delete",
-        "salveaza": "save",
-        "trimite": "send",
-        "anuleaza": "cancel",
-        "inchide": "close",
+        // Actions
+        "adauga": "add", "adaugă": "add", "seteaza": "set", "setează": "set",
+        "sterge": "delete", "șterge": "delete", "salveaza": "save", "salvează": "save",
 
-        // Common descriptors
-        "serviciu": "service",
-        "produs": "product",
-        "munca": "work",
-        "consultanta": "consulting",
-        "design": "design",
-        "dezvoltare": "development",
-        "euro": "euro",
-        "leu": "lei",
-        "lei": "lei",
+        // Units and joining words
+        "ora": "hour", "oră": "hour", "ore": "hours", "zi": "day", "zile": "days",
+        "la": "at", "pentru": "for", "de": "of", "si": "and", "și": "and",
+        "procente": "percent", "procent": "percent", "la suta": "percent",
+
+        // Common work descriptions
+        "serviciu": "service", "servicii": "services", "produs": "product", "produse": "products",
+        "munca": "work", "muncă": "work", "lucru": "work", "consultanta": "consulting",
+        "consultanță": "consulting", "design": "design", "dezvoltare": "development",
+        "reparatie": "repair", "reparație": "repair", "instalare": "installation",
+        "curatenie": "cleaning", "curățenie": "cleaning", "transport": "transport",
+        "materiale": "materials", "manopera": "labour", "manoperă": "labour",
+        "euro": "euro", "lei": "lei", "leu": "lei",
     ]
 
-    /// Translates text from Romanian to English using online service with offline fallback
     func translateRomanianToEnglish(_ text: String) async -> String {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return "" }
+
         isTranslating = true
+        usedOfflineFallback = false
         defer { isTranslating = false }
 
-        // First try online translation
-        if let translated = await translateOnline(text, from: "ro", to: "en") {
-            return translated
+        if let online = await translateOnline(trimmed), !online.isEmpty {
+            return online
         }
 
-        // Fallback to offline translation
-        return offlineTranslate(text)
+        usedOfflineFallback = true
+        return offlineTranslate(trimmed)
     }
 
-    /// Online translation using Google Translate API (optional fallback)
-    private func translateOnline(_ text: String, from: String, to: String) async -> String? {
-        let encoded = text.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? text
-        let urlString = "https://api.mymemory.translated.net/get?q=\(encoded)&langpair=\(from)|\(to)"
+    /// MyMemory is a free endpoint with no API key. Any failure falls through to the glossary.
+    private func translateOnline(_ text: String) async -> String? {
+        guard let encoded = text.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+              let url = URL(string: "https://api.mymemory.translated.net/get?q=\(encoded)&langpair=ro|en")
+        else { return nil }
 
-        guard let url = URL(string: urlString) else {
-            error = "Invalid URL"
-            return nil
-        }
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 4
 
         do {
-            let (data, response) = try await URLSession.shared.data(from: url)
-            guard (response as? HTTPURLResponse)?.statusCode == 200 else {
-                error = "Translation service unavailable"
-                return nil
-            }
-
-            if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-               let responseData = json["responseData"] as? [String: Any],
-               let translatedText = responseData["translatedText"] as? String {
-                return translatedText
-            }
+            let (data, response) = try await URLSession.shared.data(for: request)
+            guard let http = response as? HTTPURLResponse, http.statusCode == 200 else { return nil }
+            guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let responseData = json["responseData"] as? [String: Any],
+                  let translated = responseData["translatedText"] as? String
+            else { return nil }
+            return translated.trimmingCharacters(in: .whitespacesAndNewlines)
         } catch {
-            self.error = "Translation failed: \(error.localizedDescription)"
+            return nil
         }
-
-        return nil
     }
 
-    /// Offline translation using local dictionary
-    private func offlineTranslate(_ text: String) -> String {
-        let words = text.lowercased()
-            .split(separator: " ")
-            .map(String.init)
-
-        let translated = words.map { word -> String in
-            let cleanWord = word.trimmingCharacters(in: CharacterSet.punctuationCharacters)
-            return offlineTranslations[cleanWord] ?? word
+    /// Word by word substitution. Crude, but enough for the short command phrases we expect.
+    func offlineTranslate(_ text: String) -> String {
+        let words = text.split(separator: " ").map(String.init)
+        let mapped = words.map { word -> String in
+            let key = word
+                .trimmingCharacters(in: .punctuationCharacters)
+                .lowercased()
+            return Self.glossary[key] ?? word
         }
-
-        return translated.joined(separator: " ")
+        return mapped.joined(separator: " ")
     }
 }

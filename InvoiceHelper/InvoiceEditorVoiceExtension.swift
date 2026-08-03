@@ -1,97 +1,50 @@
-import SwiftUI
+import Foundation
 
-/// This extension shows how to integrate voice input into InvoiceEditorView.
-/// Copy the @State variable and modify the Section("Line items") to add the voice button.
-
-extension InvoiceEditorView {
-    /// Add this @State variable to InvoiceEditorView:
-    /// @State private var showVoiceInput = false
-
-    /// Modify the Section("Line items") in InvoiceEditorView to include this:
-    func lineItemsSection() -> some View {
-        Section("Line items") {
-            ForEach(Array(lines.enumerated()), id: \.element.id) { index, _ in
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack(alignment: .top, spacing: 8) {
-                        VStack(alignment: .leading, spacing: 8) {
-                            TextField("Description", text: $lines[index].description, axis: .vertical)
-                                .lineLimit(2...8)
-                                .textInputAutocapitalization(.sentences)
-                            Divider()
-                            InvoiceLineQtyUnitRow(
-                                quantity: $lines[index].quantity,
-                                unitPrice: $lines[index].unitPrice
-                            )
-                        }
-                        if lines.count > 1 {
-                            Button(role: .destructive) {
-                                lines.remove(at: index)
-                            } label: {
-                                Image(systemName: "trash.circle.fill")
-                                    .font(.title3)
-                                    .symbolRenderingMode(.hierarchical)
-                            }
-                            .buttonStyle(.plain)
-                            .accessibilityLabel("Remove item")
-                        }
-                    }
-                }
-                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                    if lines.count > 1 {
-                        Button("Remove", role: .destructive) {
-                            lines.remove(at: index)
-                        }
-                    }
-                }
-            }
-            .onDelete { lines.remove(atOffsets: $0) }
-
-            Button("Add Item") {
-                lines.append(LineRow())
-            }
-
-            Button {
-                // showVoiceInput = true
-            } label: {
-                Label("Add via voice", systemImage: "mic.circle.fill")
-            }
-            .tint(AppTheme.infoBlue)
-
-            Button {
-                // showSavedItemsPicker = true
-            } label: {
-                Label("Add from saved items", systemImage: "tray.and.arrow.down")
-            }
-        }
-    }
-}
-
-/// Integration helper struct for voice commands
-struct VoiceInvoiceIntegration {
-    /// Handle voice item additions
+/// Bridges the parsed dictation result into the invoice editor's local form state.
+enum VoiceInvoiceIntegration {
+    /// Appends dictated items. Reuses the first row if it is still blank so a fresh
+    /// editor does not end up with an empty line above the dictated one.
     static func addVoiceItems(_ voiceItems: [VoiceLineItem], to lines: inout [InvoiceEditorView.LineRow]) {
-        for voiceItem in voiceItems {
-            lines.append(InvoiceEditorView.LineRow(
-                description: voiceItem.description,
-                quantity: String(format: "%.2f", voiceItem.quantity),
-                unitPrice: String(format: "%.2f", voiceItem.unitPrice)
-            ))
-        }
-    }
+        guard !voiceItems.isEmpty else { return }
 
-    /// Handle voice note additions
-    static func addVoiceNote(_ note: String, to currentNotes: inout String) {
-        if currentNotes.isEmpty {
-            currentNotes = note
+        let rows = voiceItems.map { item in
+            InvoiceEditorView.LineRow(
+                description: item.description,
+                quantity: formatNumber(item.quantity),
+                unitPrice: formatNumber(item.unitPrice)
+            )
+        }
+
+        if lines.count == 1, isBlank(lines[0]) {
+            lines = rows
         } else {
-            currentNotes += "\n\(note)"
+            lines.append(contentsOf: rows)
         }
     }
 
-    /// Handle voice tax rate changes
+    static func addVoiceNote(_ note: String, to notes: inout String) {
+        let trimmed = note.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        notes = notes.isEmpty ? trimmed : notes + "\n" + trimmed
+    }
+
+    /// Snaps to the nearest rate the editor's picker offers, since it is a fixed list.
     static func applyVoiceTaxRate(_ rate: Double, to taxRate: inout Double) {
-        if rate >= 0 && rate <= 100 {
-            taxRate = rate
+        guard rate >= 0, rate <= 100 else { return }
+        if let exact = InvoiceLogic.taxRates.first(where: { $0 == rate }) {
+            taxRate = exact
+        } else if let nearest = InvoiceLogic.taxRates.min(by: { abs($0 - rate) < abs($1 - rate) }) {
+            taxRate = nearest
         }
+    }
+
+    private static func isBlank(_ row: InvoiceEditorView.LineRow) -> Bool {
+        row.description.trimmingCharacters(in: .whitespaces).isEmpty
+            && row.quantity.trimmingCharacters(in: .whitespaces).isEmpty
+            && row.unitPrice.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+
+    private static func formatNumber(_ value: Double) -> String {
+        value == value.rounded() ? String(format: "%.0f", value) : String(format: "%.2f", value)
     }
 }

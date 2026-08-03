@@ -13,6 +13,7 @@ struct DashboardView: View {
     @State private var paymentSheetInvoiceId: String?
     @State private var pdfShareItem: SharePDFURL?
     @State private var invoiceListErrorMessage: String?
+    @State private var showVoiceQuickEntry = false
 
     private let grid = [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)]
 
@@ -80,6 +81,7 @@ struct DashboardView: View {
         .padding(.bottom, 24)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(Color(.systemGroupedBackground))
+        .overlay(alignment: .bottomTrailing) { voiceFAB }
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(for: InvoiceDetailNavigationID.self) { route in
@@ -134,6 +136,13 @@ struct DashboardView: View {
                 }
             }
         }
+        .sheet(isPresented: $showVoiceQuickEntry) {
+            VoiceQuickEntrySheet { newInvoiceId in
+                invoicePreviewId = newInvoiceId
+                showInvoicePreview = true
+            }
+            .environmentObject(store)
+        }
         .sheet(isPresented: $showCustomerPreview) {
             if let id = customerPreviewId {
                 NavigationStack {
@@ -183,6 +192,25 @@ struct DashboardView: View {
         let name = store.companyProfile?.name.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         if name.isEmpty { return "Welcome" }
         return "Welcome, \(name)"
+    }
+
+    /// Floating action button for dictating a new invoice.
+    private var voiceFAB: some View {
+        Button {
+            Haptics.light()
+            showVoiceQuickEntry = true
+        } label: {
+            Image(systemName: "mic.fill")
+                .font(.title2.weight(.semibold))
+                .foregroundStyle(.white)
+                .frame(width: 60, height: 60)
+                .background(AppTheme.infoBlue, in: Circle())
+                .shadow(color: AppTheme.infoBlue.opacity(0.4), radius: 10, x: 0, y: 5)
+        }
+        .buttonStyle(.plain)
+        .padding(.trailing, 20)
+        .padding(.bottom, 24)
+        .accessibilityLabel("New invoice by voice")
     }
 
     @ViewBuilder
