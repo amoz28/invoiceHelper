@@ -9,13 +9,19 @@ import Foundation
 /// enough to unit test exhaustively.
 struct SlotParser {
     /// Recognised for any gap, checked before slot-specific parsing.
-    private static let finishWords = ["that's it", "thats it", "that's all", "thats all",
-                                      "done", "finished", "nothing else", "no more",
-                                      "save it", "yes", "yep", "yeah", "correct", "go ahead"]
+    private static let finishWords = ["save it", "go ahead", "send it"]
     private static let undoWords = ["scratch that", "remove that", "delete that", "undo",
                                     "no", "nope", "wrong", "not right"]
     private static let cancelWords = ["cancel", "stop", "forget it", "never mind", "nevermind"]
     private static let repeatWords = ["repeat", "say again", "read it back", "what was that"]
+    private static let skipWords = ["skip", "skip it", "skip that", "leave it", "leave that",
+                                    "not sure", "not sure yet", "don't know", "dont know",
+                                    "come back to it", "later", "pass"]
+    private static let noMoreWords = ["that's it", "thats it", "that's all", "thats all",
+                                      "nothing else", "no more", "no thanks", "that's everything",
+                                      "thats everything", "done", "finished"]
+    private static let affirmWords = ["yes", "yep", "yeah", "correct", "right", "that's right",
+                                      "thats right", "sure", "ok", "okay", "fine"]
 
     private static let numberWords: [String: Double] = [
         "zero": 0, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6,
@@ -40,7 +46,7 @@ struct SlotParser {
         // undo because "stop" should never be read as a correction.
         if Self.cancelWords.contains(where: { lower == $0 || lower.hasPrefix($0 + " ") }) { return .cancel }
         if Self.repeatWords.contains(where: { lower.contains($0) }) { return .repeatLast }
-        if Self.finishWords.contains(where: { lower == $0 }) { return .finish }
+        if Self.skipWords.contains(where: { lower == $0 }) { return .skip }
         if Self.undoWords.contains(where: { lower == $0 }) { return .undo }
 
         // Explicit overrides work at any point in the conversation.
@@ -53,30 +59,48 @@ struct SlotParser {
             return .addNote(note)
         }
 
-        // Confirming accepts only yes/no-shaped answers plus corrections, which
-        // fall through to the slot parsers below.
-        if isConfirming, Self.finishWords.contains(where: { lower.hasPrefix($0) }) {
+        // Confirming the whole invoice: only yes-shaped answers finish. Anything
+        // else falls through to the slot parsers so a correction still lands.
+        if isConfirming, Self.affirmWords.contains(lower) || Self.finishWords.contains(where: { lower.hasPrefix($0) }) {
             return .finish
         }
 
         switch gap {
-        case .customer:
+        case .slot(.customer):
             return .setCustomer(text)
 
-        case .itemQuantity:
+        case .slot(.itemQuantity):
             if let value = firstNumber(in: text), value > 0 { return .quantity(value) }
-            // They may have skipped ahead and given a whole item instead.
             return fullItem(in: text) ?? .unclear
 
-        case .itemPrice:
+        case .slot(.itemPrice):
             if let value = firstNumber(in: text), value > 0 { return .price(value) }
             return fullItem(in: text) ?? .unclear
 
-        case .itemDescription, .anythingElse:
+        case .slot(.taxRate):
+            if Self.affirmWords.contains(lower) { return .confirmTax }
+            if let rate = firstNumber(in: text), rate >= 0, rate <= 100 { return .setTax(rate) }
+            return .unclear
+
+        case .anythingElse:
+            if Self.noMoreWords.contains(where: { lower == $0 || lower.hasPrefix($0) }) {
+                return .noMoreItems
+            }
+            if Self.affirmWords.contains(lower) { return .unclear }
             if let item = fullItem(in: text) { return item }
-            if Self.finishWords.contains(where: { lower.hasPrefix($0) }) { return .finish }
+            let more = cleanDescription(text)
+            return more.isEmpty ? .unclear : .itemDescription(more)
+
+        case .slot(.itemDescription):
+            if Self.noMoreWords.contains(where: { lower == $0 }) { return .noMoreItems }
+            if let item = fullItem(in: text) { return item }
             let description = cleanDescription(text)
             return description.isEmpty ? .unclear : .itemDescription(description)
+
+        case .readyToConfirm:
+            if Self.affirmWords.contains(lower) { return .finish }
+            if let item = fullItem(in: text) { return item }
+            return .unclear
         }
     }
 
