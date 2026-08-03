@@ -60,7 +60,7 @@ struct ConversationalInvoiceView: View {
                     }
                 }
             }
-            .sheet(isPresented: $showCustomerPicker) {
+            .sheet(isPresented: $showCustomerPicker, onDismiss: { session.resume() }) {
                 customerPicker
             }
             .alert("Error", isPresented: Binding(
@@ -76,6 +76,24 @@ struct ConversationalInvoiceView: View {
             .onChange(of: dialogue.isComplete) { _, done in
                 if done { Task { await saveInvoice() } }
             }
+            .onChange(of: typingField) { _, field in
+                // Typing and listening cannot share the room. While the keyboard is
+                // up the recognizer would transcribe muttering into the focused
+                // field, so the mic pauses and picks back up on dismiss.
+                if let field {
+                    dialogue.focus(field)
+                    session.suspend()
+                } else {
+                    session.resume()
+                }
+            }
+            .onChange(of: dialogue.focusedSlot) { _, slot in
+                // Voice moved on, so pull the keyboard off a field the user is no
+                // longer being asked about.
+                if let slot, typingField != nil, typingField != slot {
+                    typingField = nil
+                }
+            }
         }
     }
 
@@ -85,6 +103,7 @@ struct ConversationalInvoiceView: View {
         Section {
             Button {
                 dialogue.focus(.customer)
+                session.suspend()
                 showCustomerPicker = true
             } label: {
                 HStack {

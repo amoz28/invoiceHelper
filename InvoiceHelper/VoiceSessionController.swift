@@ -243,6 +243,34 @@ final class VoiceSessionController: NSObject, ObservableObject {
         synthesizer.stopSpeaking(at: .immediate)
     }
 
+    // MARK: - Suspend and resume
+
+    /// True while suspended by the keyboard, so resume() knows there is something
+    /// to go back to and a second suspend is a no-op.
+    private(set) var isSuspended = false
+
+    /// Stops listening without ending the session. Used while the keyboard is up:
+    /// otherwise the recognizer transcribes room noise and muttering straight into
+    /// whichever field is focused.
+    func suspend() {
+        guard !isSuspended, state.isActive else { return }
+        isSuspended = true
+        synthesizer.stopSpeaking(at: .immediate)
+        silenceTimer?.invalidate()
+        silenceTimer = nil
+        endRecognition()
+        deactivateSession()
+        partialTranscript = ""
+        state = .idle
+    }
+
+    /// Picks listening back up where suspend() left it.
+    func resume() {
+        guard isSuspended else { return }
+        isSuspended = false
+        beginListening()
+    }
+
     // MARK: - Permissions
 
     private func requestPermissions() async -> Bool {
