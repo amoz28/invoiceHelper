@@ -30,6 +30,7 @@
 		A10000000000000000000015 /* JobsCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000015 /* JobsCalendarView.swift */; };
 		A10000000000000000000016 /* CompanyLogoSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000016 /* CompanyLogoSupport.swift */; };
 		A10000000000000000000017 /* CompanyLogoSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000017 /* CompanyLogoSection.swift */; };
+		A10000000000000000000036 /* VoiceSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000036 /* VoiceSessionController.swift */; };
 		A10000000000000000000035 /* InvoiceEditorVoiceExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000035 /* InvoiceEditorVoiceExtension.swift */; };
 		A10000000000000000000034 /* VoiceQuickEntrySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000034 /* VoiceQuickEntrySheet.swift */; };
 		A10000000000000000000033 /* VoiceInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000033 /* VoiceInputView.swift */; };
@@ -68,6 +69,7 @@
 		A20000000000000000000015 /* JobsCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobsCalendarView.swift; sourceTree = "<group>"; };
 		A20000000000000000000016 /* CompanyLogoSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyLogoSupport.swift; sourceTree = "<group>"; };
 		A20000000000000000000017 /* CompanyLogoSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyLogoSection.swift; sourceTree = "<group>"; };
+		A20000000000000000000036 /* VoiceSessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceSessionController.swift; sourceTree = "<group>"; };
 		A20000000000000000000035 /* InvoiceEditorVoiceExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvoiceEditorVoiceExtension.swift; sourceTree = "<group>"; };
 		A20000000000000000000034 /* VoiceQuickEntrySheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceQuickEntrySheet.swift; sourceTree = "<group>"; };
 		A20000000000000000000033 /* VoiceInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceInputView.swift; sourceTree = "<group>"; };
@@ -130,6 +132,7 @@
 				A20000000000000000000015 /* JobsCalendarView.swift */,
 				A20000000000000000000016 /* CompanyLogoSupport.swift */,
 				A20000000000000000000017 /* CompanyLogoSection.swift */,
+				A20000000000000000000036 /* VoiceSessionController.swift */,
 				A20000000000000000000035 /* InvoiceEditorVoiceExtension.swift */,
 				A20000000000000000000034 /* VoiceQuickEntrySheet.swift */,
 				A20000000000000000000033 /* VoiceInputView.swift */,
@@ -246,6 +249,7 @@
 				A10000000000000000000015 /* JobsCalendarView.swift in Sources */,
 				A10000000000000000000016 /* CompanyLogoSupport.swift in Sources */,
 				A10000000000000000000017 /* CompanyLogoSection.swift in Sources */,
+				A10000000000000000000036 /* VoiceSessionController.swift in Sources */,
 				A10000000000000000000035 /* InvoiceEditorVoiceExtension.swift in Sources */,
 				A10000000000000000000034 /* VoiceQuickEntrySheet.swift in Sources */,
 				A10000000000000000000033 /* VoiceInputView.swift in Sources */,
