@@ -18,6 +18,9 @@ struct ConversationalInvoiceView: View {
     @State private var showCustomerPicker = false
     @State private var errorMessage: String?
     @State private var isSaving = false
+    /// Held until the keyboard closes: speaking over an open keyboard is both
+    /// jarring and pointless, since the mic is suspended anyway.
+    @State private var pendingLine: String?
     @FocusState private var typingField: SlotID?
 
     private let parser = SlotParser()
@@ -60,7 +63,13 @@ struct ConversationalInvoiceView: View {
                     }
                 }
             }
-            .sheet(isPresented: $showCustomerPicker, onDismiss: { session.resume() }) {
+            .sheet(isPresented: $showCustomerPicker, onDismiss: {
+                session.resume()
+                if let line = pendingLine {
+                    pendingLine = nil
+                    session.say(line)
+                }
+            }) {
                 customerPicker
             }
             .alert("Error", isPresented: Binding(
@@ -76,7 +85,15 @@ struct ConversationalInvoiceView: View {
             .onChange(of: dialogue.isComplete) { _, done in
                 if done { Task { await saveInvoice() } }
             }
-            .onChange(of: typingField) { _, field in
+            .onChange(of: typingField) { previous, field in
+                // A field counts as manually filled when focus leaves it, not on
+                // every keystroke, otherwise typing 'Rewiring' would register as
+                // eight separate fills and silence the app mid-word.
+                if let previous {
+                    let line = dialogue.recordManualFill(of: previous)
+                    if let line, !dialogue.isQuiet { pendingLine = line }
+                }
+
                 // Typing and listening cannot share the room. While the keyboard is
                 // up the recognizer would transcribe muttering into the focused
                 // field, so the mic pauses and picks back up on dismiss.
@@ -85,6 +102,10 @@ struct ConversationalInvoiceView: View {
                     session.suspend()
                 } else {
                     session.resume()
+                    if let line = pendingLine {
+                        pendingLine = nil
+                        session.say(line)
+                    }
                 }
             }
             .onChange(of: dialogue.focusedSlot) { _, slot in
@@ -295,9 +316,22 @@ struct ConversationalInvoiceView: View {
 
             Spacer()
 
+            if dialogue.isQuiet {
+                Button {
+                    dialogue.resumeSpeaking()
+                    Haptics.light()
+                } label: {
+                    Image(systemName: "speaker.slash.fill")
+                        .font(.subheadline)
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(.secondary)
+                .accessibilityLabel("Turn spoken prompts back on")
+            }
+
             if let slot = dialogue.focusedSlot, session.state.isActive {
                 Button("Skip") {
-                    _ = dialogue.handle(.skip)
+                    if let line = dialogue.handle(.skip) { session.say(line) }
                     Haptics.light()
                 }
                 .font(.subheadline.weight(.semibold))
@@ -314,6 +348,7 @@ struct ConversationalInvoiceView: View {
             List(store.customers) { customer in
                 Button {
                     draft.setCustomer(id: customer.id, name: CustomerHeader.primary(customer))
+                    pendingLine = dialogue.recordManualFill(of: .customer)
                     showCustomerPicker = false
                 } label: {
                     Text(CustomerHeader.primary(customer))
@@ -333,7 +368,7 @@ struct ConversationalInvoiceView: View {
     private var statusLine: String {
         switch session.state {
         case .idle: return isSaving ? "Saving" : "Tap to start"
-        case .listening: return "Listening"
+        case .listening: return dialogue.isQuiet ? "Following along" : "Listening"
         case .thinking: return "One moment"
         case .speaking: return "Tap to interrupt"
         case .failed(let message): return message

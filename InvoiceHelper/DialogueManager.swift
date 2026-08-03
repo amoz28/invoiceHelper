@@ -17,6 +17,17 @@ final class DialogueManager: ObservableObject {
     @Published private(set) var isAwaitingConfirmation = false
     @Published private(set) var isComplete = false
 
+    /// True once the user has filled several fields by hand in a row. The manager
+    /// keeps tracking focus and updating the draft, it just stops talking: someone
+    /// working through the form with a keyboard does not want to be narrated at.
+    @Published private(set) var isQuiet = false
+
+    /// Consecutive manual fills. Any spoken input resets it.
+    private var manualStreak = 0
+    /// Chosen by feel rather than principle: one typed field is often a correction
+    /// mid-conversation, three is a decision to use the keyboard.
+    private let quietThreshold = 3
+
     private let phrases: PhraseCatalog
     private let resolveCustomer: (String) -> (id: String, name: String)?
     private let customerCandidates: (String) -> [String]
@@ -39,7 +50,13 @@ final class DialogueManager: ObservableObject {
     }
 
     /// Applies an intent and returns the line to speak, or nil to keep listening.
+    ///
+    /// Spoken input ends any quiet spell: talking to the app is an unambiguous
+    /// signal that being talked back to is welcome again.
     func handle(_ intent: VoiceIntent) -> String? {
+        manualStreak = 0
+        isQuiet = false
+
         if isAwaitingConfirmation {
             return handleWhileConfirming(intent)
         }
@@ -120,6 +137,28 @@ final class DialogueManager: ObservableObject {
     /// Called when the user taps a field, so speech retargets to what they're looking at.
     func focus(_ slot: SlotID) {
         focusedSlot = slot
+    }
+
+    /// Called when a field has been filled by hand rather than spoken. Advances focus
+    /// exactly as a spoken answer would, so the form and the conversation stay in
+    /// step, and returns the next prompt only if the app is still talking.
+    @discardableResult
+    func recordManualFill(of slot: SlotID) -> String? {
+        guard draft.state(of: slot) != .empty else { return nil }
+
+        manualStreak += 1
+        if manualStreak >= quietThreshold { isQuiet = true }
+
+        focusedSlot = slot
+        let line = advance()
+        return isQuiet ? nil : line
+    }
+
+    /// Turns speech back on without needing a spoken word first, for the unmute
+    /// control in the mic bar.
+    func resumeSpeaking() {
+        manualStreak = 0
+        isQuiet = false
     }
 
     // MARK: - Advancing

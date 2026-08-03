@@ -176,6 +176,111 @@ final class VoiceDialogueTests: XCTestCase {
         XCTAssertNotEqual(manager.draft.items[1].unitPrice, 75)
     }
 
+    // MARK: - Quiet mode
+
+    func testStaysVocalForOneOrTwoManualFills() {
+        let manager = makeManager()
+        _ = manager.opening()
+
+        manager.draft.setCustomer(id: "c1", name: "Acme Ltd")
+        XCTAssertNotNil(manager.recordManualFill(of: .customer))
+        XCTAssertFalse(manager.isQuiet)
+
+        manager.draft.setDescription("Rewiring", at: 0)
+        XCTAssertNotNil(manager.recordManualFill(of: .itemDescription(0)))
+        XCTAssertFalse(manager.isQuiet)
+    }
+
+    func testGoesQuietAfterThreeManualFills() {
+        let manager = makeManager()
+        _ = manager.opening()
+
+        manager.draft.setCustomer(id: "c1", name: "Acme Ltd")
+        _ = manager.recordManualFill(of: .customer)
+        manager.draft.setDescription("Rewiring", at: 0)
+        _ = manager.recordManualFill(of: .itemDescription(0))
+        manager.draft.setQuantity(2, at: 0)
+
+        XCTAssertNil(manager.recordManualFill(of: .itemQuantity(0)),
+                     "Third manual fill should return no line to speak")
+        XCTAssertTrue(manager.isQuiet)
+    }
+
+    func testKeepsFollowingFocusWhileQuiet() {
+        let manager = makeManager()
+        _ = manager.opening()
+
+        manager.draft.setCustomer(id: "c1", name: "Acme Ltd")
+        _ = manager.recordManualFill(of: .customer)
+        manager.draft.setDescription("Rewiring", at: 0)
+        _ = manager.recordManualFill(of: .itemDescription(0))
+        manager.draft.setQuantity(2, at: 0)
+        _ = manager.recordManualFill(of: .itemQuantity(0))
+
+        // Quiet means silent, not inert: focus still advances to the next gap.
+        XCTAssertTrue(manager.isQuiet)
+        XCTAssertEqual(manager.focusedSlot, .itemPrice(0))
+    }
+
+    func testSpeakingBreaksTheQuietSpell() {
+        let manager = makeManager()
+        _ = manager.opening()
+
+        manager.draft.setCustomer(id: "c1", name: "Acme Ltd")
+        _ = manager.recordManualFill(of: .customer)
+        manager.draft.setDescription("Rewiring", at: 0)
+        _ = manager.recordManualFill(of: .itemDescription(0))
+        manager.draft.setQuantity(2, at: 0)
+        _ = manager.recordManualFill(of: .itemQuantity(0))
+        XCTAssertTrue(manager.isQuiet)
+
+        XCTAssertNotNil(manager.handle(.price(50)))
+        XCTAssertFalse(manager.isQuiet)
+    }
+
+    func testManualStreakResetsSoQuietNeedsThreeMoreFills() {
+        let manager = makeManager()
+        _ = manager.opening()
+
+        manager.draft.setCustomer(id: "c1", name: "Acme Ltd")
+        _ = manager.recordManualFill(of: .customer)
+        manager.draft.setDescription("Rewiring", at: 0)
+        _ = manager.recordManualFill(of: .itemDescription(0))
+
+        // A spoken answer in the middle clears the streak.
+        _ = manager.handle(.quantity(2))
+
+        manager.draft.setUnitPrice(50, at: 0)
+        XCTAssertNotNil(manager.recordManualFill(of: .itemPrice(0)))
+        XCTAssertFalse(manager.isQuiet, "Streak should have restarted at one")
+    }
+
+    func testResumeSpeakingUnmutesWithoutSpokenInput() {
+        let manager = makeManager()
+        _ = manager.opening()
+
+        manager.draft.setCustomer(id: "c1", name: "Acme Ltd")
+        _ = manager.recordManualFill(of: .customer)
+        manager.draft.setDescription("Rewiring", at: 0)
+        _ = manager.recordManualFill(of: .itemDescription(0))
+        manager.draft.setQuantity(2, at: 0)
+        _ = manager.recordManualFill(of: .itemQuantity(0))
+        XCTAssertTrue(manager.isQuiet)
+
+        manager.resumeSpeaking()
+        XCTAssertFalse(manager.isQuiet)
+    }
+
+    func testAnEmptyFieldIsNotAManualFill() {
+        let manager = makeManager()
+        _ = manager.opening()
+
+        // Tapping into a field and leaving without typing must not count, or
+        // browsing the form would silence the app.
+        XCTAssertNil(manager.recordManualFill(of: .itemDescription(0)))
+        XCTAssertFalse(manager.isQuiet)
+    }
+
     // MARK: - Parsing
 
     func testParsesBareNumberAsQuantityWhenAsked() {
