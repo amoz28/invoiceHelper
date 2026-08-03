@@ -1,11 +1,10 @@
 import SwiftUI
 
-/// The conversational flow: the app asks, the user answers, repeat until saved.
+/// A form that talks. Every field is visible and editable from the start; the
+/// conversation drives which one is focused rather than replacing the form.
 ///
-/// The view owns the wiring between the session controller, the parser, and the
-/// dialogue manager, and holds no invoice logic of its own. The transcript stays
-/// on screen throughout so the user can see what was heard, since spotting a
-/// misheard amount matters more than a tidy interface.
+/// The transcript-style UI this replaces could not support "fill by voice or type
+/// instead" or "skip and come back", because there was nothing on screen to tap.
 struct ConversationalInvoiceView: View {
     @EnvironmentObject private var store: AppStore
     @Environment(\.dismiss) private var dismiss
@@ -14,50 +13,45 @@ struct ConversationalInvoiceView: View {
 
     @StateObject private var session = VoiceSessionController()
     @StateObject private var dialogue: DialogueManager
-    @State private var resolver: VoiceEntityResolver?
+    @ObservedObject private var draft: InvoiceDraft
+
+    @State private var showCustomerPicker = false
     @State private var errorMessage: String?
     @State private var isSaving = false
+    @FocusState private var typingField: SlotID?
 
     private let parser = SlotParser()
 
-    init(defaultTaxRate: Double, resolveCustomer: @escaping (String) -> (id: String, name: String)?, onInvoiceCreated: @escaping (String) -> Void) {
+    init(
+        resolveCustomer: @escaping (String) -> (id: String, name: String)?,
+        customerCandidates: @escaping (String) -> [String] = { _ in [] },
+        onInvoiceCreated: @escaping (String) -> Void
+    ) {
         self.onInvoiceCreated = onInvoiceCreated
+        let sharedDraft = InvoiceDraft()
+        _draft = ObservedObject(wrappedValue: sharedDraft)
         _dialogue = StateObject(wrappedValue: DialogueManager(
-            defaultTaxRate: defaultTaxRate,
-            resolveCustomer: resolveCustomer
+            draft: sharedDraft,
+            resolveCustomer: resolveCustomer,
+            customerCandidates: customerCandidates
         ))
     }
 
     var body: some View {
         NavigationStack {
-            ScrollViewReader { proxy in
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 12) {
-                        ForEach(session.exchanges) { exchange in
-                            bubble(exchange)
-                                .id(exchange.id)
-                        }
-
-                        if !session.partialTranscript.isEmpty {
-                            bubble(.init(speaker: .user, text: session.partialTranscript))
-                                .opacity(0.55)
-                                .id("partial")
-                        }
-
-                        if dialogue.draft.isReadyToConfirm {
-                            draftSummary
-                                .padding(.top, 4)
-                        }
-                    }
-                    .padding(16)
+            Form {
+                customerSection
+                ForEach(draft.items.indices, id: \.self) { index in
+                    itemSection(index)
                 }
-                .onChange(of: session.exchanges.count) { _, _ in
-                    withAnimation { proxy.scrollTo(session.exchanges.last?.id, anchor: .bottom) }
-                }
+                addItemRow
+                taxSection
+                totalsSection
+                saveSection
             }
-            .safeAreaInset(edge: .bottom) { controls }
             .navigationTitle("New invoice")
             .navigationBarTitleDisplayMode(.inline)
+            .safeAreaInset(edge: .bottom) { micBar }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close") {
@@ -65,6 +59,9 @@ struct ConversationalInvoiceView: View {
                         dismiss()
                     }
                 }
+            }
+            .sheet(isPresented: $showCustomerPicker) {
+                customerPicker
             }
             .alert("Error", isPresented: Binding(
                 get: { errorMessage != nil },
@@ -82,78 +79,236 @@ struct ConversationalInvoiceView: View {
         }
     }
 
-    // MARK: - Pieces
+    // MARK: - Sections
 
-    private func bubble(_ exchange: VoiceSessionController.Exchange) -> some View {
-        HStack {
-            if exchange.speaker == .user { Spacer(minLength: 40) }
-            Text(exchange.text)
-                .font(.body)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 10)
-                .foregroundStyle(exchange.speaker == .user ? .white : Color.primary)
-                .background(
-                    exchange.speaker == .user ? AppTheme.infoBlue : Color(.secondarySystemGroupedBackground),
-                    in: RoundedRectangle(cornerRadius: 16, style: .continuous)
-                )
-            if exchange.speaker == .app { Spacer(minLength: 40) }
+    private var customerSection: some View {
+        Section {
+            Button {
+                dialogue.focus(.customer)
+                showCustomerPicker = true
+            } label: {
+                HStack {
+                    Text(draft.customerName ?? "Choose a customer")
+                        .foregroundStyle(draft.customerName == nil ? .secondary : .primary)
+                    Spacer()
+                    slotBadge(.customer)
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+        } header: {
+            sectionHeader("Customer", slot: .customer)
         }
     }
 
-    private var draftSummary: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            if let name = dialogue.draft.customerName {
-                Text(name).font(.subheadline.weight(.semibold))
+    private func itemSection(_ index: Int) -> some View {
+        Section {
+            TextField("What did you do?", text: Binding(
+                get: { draft.items[safe: index]?.description ?? "" },
+                set: { draft.setDescription($0, at: index) }
+            ), axis: .vertical)
+            .lineLimit(1...4)
+            .focused($typingField, equals: .itemDescription(index))
+
+            HStack {
+                Text("Quantity")
+                Spacer()
+                TextField("1", text: numberBinding(
+                    get: { draft.items[safe: index]?.quantity },
+                    set: { draft.setQuantity($0, at: index) }
+                ))
+                .keyboardType(.decimalPad)
+                .multilineTextAlignment(.trailing)
+                .frame(maxWidth: 100)
+                .focused($typingField, equals: .itemQuantity(index))
+                slotBadge(.itemQuantity(index))
             }
-            ForEach(dialogue.draft.completeItems) { item in
-                HStack {
-                    Text(item.description).font(.caption)
-                    Spacer(minLength: 8)
-                    Text(money(item.amount)).font(.caption.weight(.semibold))
+
+            HStack {
+                Text("Unit price")
+                Spacer()
+                TextField("0.00", text: numberBinding(
+                    get: { draft.items[safe: index]?.unitPrice },
+                    set: { draft.setUnitPrice($0, at: index) }
+                ))
+                .keyboardType(.decimalPad)
+                .multilineTextAlignment(.trailing)
+                .frame(maxWidth: 100)
+                .focused($typingField, equals: .itemPrice(index))
+                slotBadge(.itemPrice(index))
+            }
+        } header: {
+            HStack {
+                sectionHeader("Item \(index + 1)", slot: .itemDescription(index))
+                Spacer()
+                if draft.items.count > 1 {
+                    Button("Remove") { draft.removeItem(at: index) }
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                        .textCase(nil)
                 }
             }
-            Divider()
-            HStack {
-                Text("Total").font(.caption.weight(.semibold))
-                Spacer()
-                Text(money(dialogue.draft.total))
-                    .font(.subheadline.weight(.semibold))
+        }
+    }
+
+    private var addItemRow: some View {
+        Section {
+            Button {
+                draft.appendItem()
+                dialogue.focus(.itemDescription(draft.items.count - 1))
+            } label: {
+                Label("Add another item", systemImage: "plus.circle")
+            }
+        }
+    }
+
+    private var taxSection: some View {
+        Section {
+            Picker("Tax rate", selection: Binding(
+                get: { draft.taxRate },
+                set: { draft.setTaxRate($0) }
+            )) {
+                ForEach(InvoiceLogic.taxRates, id: \.self) { rate in
+                    Text(rate == rate.rounded() ? String(format: "%.0f%%", rate) : String(format: "%.2f%%", rate))
+                        .tag(rate)
+                }
+            }
+        } header: {
+            sectionHeader("Tax", slot: .taxRate)
+        } footer: {
+            if !draft.taxConfirmed {
+                Text("Defaults to 20%.").font(.caption)
+            }
+        }
+    }
+
+    private var totalsSection: some View {
+        Section {
+            LabeledContent("Subtotal", value: money(draft.subtotal))
+            LabeledContent("Tax", value: money(draft.tax))
+            LabeledContent("Total") {
+                Text(money(draft.total))
+                    .font(.body.weight(.semibold))
                     .foregroundStyle(AppTheme.revenueGreen)
             }
         }
-        .padding(12)
-        .background(Color(.tertiarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 
-    private var controls: some View {
-        VStack(spacing: 8) {
-            Text(statusLine)
-                .font(.caption)
-                .foregroundStyle(.secondary)
+    private var saveSection: some View {
+        Section {
+            Button {
+                Task { await saveInvoice() }
+            } label: {
+                if isSaving {
+                    ProgressView().frame(maxWidth: .infinity)
+                } else {
+                    Text("Create invoice").frame(maxWidth: .infinity)
+                }
+            }
+            .buttonStyle(PrimaryFormButtonStyle())
+            .disabled(!draft.canSave || isSaving)
+        } footer: {
+            if let reason = draft.saveBlockedReason {
+                Text(reason).font(.caption)
+            }
+        }
+    }
 
+    // MARK: - Bits
+
+    private func sectionHeader(_ title: String, slot: SlotID) -> some View {
+        HStack(spacing: 6) {
+            Text(title)
+            if dialogue.focusedSlot == slot {
+                Image(systemName: "waveform")
+                    .font(.caption2)
+                    .foregroundStyle(AppTheme.infoBlue)
+            }
+        }
+    }
+
+    /// Shows why a field is empty, so a skipped one reads as deliberate rather than
+    /// forgotten, and an assumed value is visibly not something the user said.
+    @ViewBuilder
+    private func slotBadge(_ slot: SlotID) -> some View {
+        switch draft.state(of: slot) {
+        case .skipped, .skippedFinal:
+            Text("Skipped")
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(.orange)
+        case .assumed:
+            Text("Assumed")
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(.secondary)
+        case .empty, .filled:
+            EmptyView()
+        }
+    }
+
+    private var micBar: some View {
+        HStack(spacing: 16) {
             Button {
                 switch session.state {
-                case .speaking:
-                    session.bargeIn()
-                case .idle, .failed:
-                    Task { await beginSession() }
-                default:
-                    session.stop()
+                case .speaking: session.bargeIn()
+                case .idle, .failed: Task { await beginSession() }
+                default: session.stop()
                 }
                 Haptics.light()
             } label: {
                 Image(systemName: session.state.isActive ? "stop.fill" : "mic.fill")
-                    .font(.title2.weight(.semibold))
+                    .font(.title3.weight(.semibold))
                     .foregroundStyle(.white)
-                    .frame(width: 64, height: 64)
+                    .frame(width: 52, height: 52)
                     .background(session.state.isActive ? Color.red : AppTheme.infoBlue, in: Circle())
             }
             .buttonStyle(.plain)
-            .disabled(isSaving)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(statusLine)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.secondary)
+                if !session.partialTranscript.isEmpty {
+                    Text(session.partialTranscript)
+                        .font(.caption)
+                        .lineLimit(2)
+                }
+            }
+
+            Spacer()
+
+            if let slot = dialogue.focusedSlot, session.state.isActive {
+                Button("Skip") {
+                    _ = dialogue.handle(.skip)
+                    Haptics.light()
+                }
+                .font(.subheadline.weight(.semibold))
+                .disabled(slot == .taxRate && draft.taxConfirmed)
+            }
         }
-        .padding(.vertical, 12)
-        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
         .background(.bar)
+    }
+
+    private var customerPicker: some View {
+        NavigationStack {
+            List(store.customers) { customer in
+                Button {
+                    draft.setCustomer(id: customer.id, name: CustomerHeader.primary(customer))
+                    showCustomerPicker = false
+                } label: {
+                    Text(CustomerHeader.primary(customer))
+                        .foregroundStyle(.primary)
+                }
+            }
+            .navigationTitle("Customer")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { showCustomerPicker = false }
+                }
+            }
+        }
     }
 
     private var statusLine: String {
@@ -170,13 +325,11 @@ struct ConversationalInvoiceView: View {
 
     private func beginSession() async {
         let entities = VoiceEntityResolver(customers: store.customers, savedItems: store.savedItems)
-        resolver = entities
-
         session.contextualStrings = entities.recognitionVocabulary
         session.onTurn = { utterance in
             let intent = parser.parse(
                 utterance,
-                gap: dialogue.draft.nextGap,
+                gap: draft.nextGap,
                 isConfirming: dialogue.isAwaitingConfirmation
             )
             if case .cancel = intent {
@@ -192,9 +345,9 @@ struct ConversationalInvoiceView: View {
     }
 
     private func saveInvoice() async {
-        guard let customerId = dialogue.draft.customerId, !isSaving else { return }
-        let items = dialogue.draft.completeItems.map {
-            InvoiceItem(description: $0.description, quantity: $0.quantity ?? 0, unitPrice: $0.unitPrice ?? 0)
+        guard draft.canSave, let customerId = draft.customerId, !isSaving else { return }
+        let items = draft.completeItems.map {
+            InvoiceItem(description: $0.description, quantity: $0.quantity ?? 1, unitPrice: $0.unitPrice ?? 0)
         }
         guard !items.isEmpty else { return }
 
@@ -215,10 +368,10 @@ struct ConversationalInvoiceView: View {
             let invoice = try await store.addInvoice(
                 customerId: customerId,
                 items: items,
-                taxRate: dialogue.draft.taxRate ?? 0,
+                taxRate: draft.taxRate,
                 date: formatter.string(from: today),
                 dueDate: formatter.string(from: due),
-                notes: dialogue.draft.notes,
+                notes: draft.notes,
                 terms: nil
             )
             Haptics.success()
@@ -229,7 +382,30 @@ struct ConversationalInvoiceView: View {
         }
     }
 
+    // MARK: - Helpers
+
+    /// Keeps a partially typed number ("12.") intact instead of round-tripping it
+    /// through Double and deleting the user's decimal point as they type.
+    private func numberBinding(get: @escaping () -> Double?, set: @escaping (Double) -> Void) -> Binding<String> {
+        Binding(
+            get: {
+                guard let value = get(), value > 0 else { return "" }
+                return value == value.rounded() ? String(format: "%.0f", value) : String(format: "%.2f", value)
+            },
+            set: { text in
+                let cleaned = text.replacingOccurrences(of: ",", with: ".")
+                if let value = Double(cleaned) { set(value) }
+            }
+        )
+    }
+
     private func money(_ value: Double) -> String {
         InvoiceLogic.formatCurrency(amount: value, code: store.companyProfile?.currency ?? "GBP")
+    }
+}
+
+private extension Array {
+    subscript(safe index: Int) -> Element? {
+        indices.contains(index) ? self[index] : nil
     }
 }
