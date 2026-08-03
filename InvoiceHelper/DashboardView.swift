@@ -137,10 +137,17 @@ struct DashboardView: View {
             }
         }
         .sheet(isPresented: $showVoiceQuickEntry) {
-            VoiceQuickEntrySheet { newInvoiceId in
-                invoicePreviewId = newInvoiceId
-                showInvoicePreview = true
-            }
+            ConversationalInvoiceView(
+                defaultTaxRate: InvoiceLogic.taxRates.contains(20) ? 20 : (InvoiceLogic.taxRates.first ?? 0),
+                resolveCustomer: { spoken in
+                    VoiceEntityResolver(customers: store.customers, savedItems: store.savedItems)
+                        .resolveCustomer(spoken)
+                },
+                onInvoiceCreated: { newInvoiceId in
+                    invoicePreviewId = newInvoiceId
+                    showInvoicePreview = true
+                }
+            )
             .environmentObject(store)
         }
         .sheet(isPresented: $showCustomerPreview) {
