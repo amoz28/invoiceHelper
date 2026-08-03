@@ -30,6 +30,8 @@
 		A10000000000000000000015 /* JobsCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000015 /* JobsCalendarView.swift */; };
 		A10000000000000000000016 /* CompanyLogoSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000016 /* CompanyLogoSupport.swift */; };
 		A10000000000000000000017 /* CompanyLogoSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000017 /* CompanyLogoSection.swift */; };
+		A1000000000000000000003B /* SlotParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003B /* SlotParser.swift */; };
+		A1000000000000000000003A /* VoiceIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003A /* VoiceIntent.swift */; };
 		A10000000000000000000039 /* PhraseCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000039 /* PhraseCatalog.swift */; };
 		A10000000000000000000038 /* DialogueManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000038 /* DialogueManager.swift */; };
 		A10000000000000000000037 /* InvoiceDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000037 /* InvoiceDraft.swift */; };
@@ -72,6 +74,8 @@
 		A20000000000000000000015 /* JobsCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobsCalendarView.swift; sourceTree = "<group>"; };
 		A20000000000000000000016 /* CompanyLogoSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyLogoSupport.swift; sourceTree = "<group>"; };
 		A20000000000000000000017 /* CompanyLogoSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyLogoSection.swift; sourceTree = "<group>"; };
+		A2000000000000000000003B /* SlotParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotParser.swift; sourceTree = "<group>"; };
+		A2000000000000000000003A /* VoiceIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceIntent.swift; sourceTree = "<group>"; };
 		A20000000000000000000039 /* PhraseCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhraseCatalog.swift; sourceTree = "<group>"; };
 		A20000000000000000000038 /* DialogueManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DialogueManager.swift; sourceTree = "<group>"; };
 		A20000000000000000000037 /* InvoiceDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvoiceDraft.swift; sourceTree = "<group>"; };
@@ -138,6 +142,8 @@
 				A20000000000000000000015 /* JobsCalendarView.swift */,
 				A20000000000000000000016 /* CompanyLogoSupport.swift */,
 				A20000000000000000000017 /* CompanyLogoSection.swift */,
+				A2000000000000000000003B /* SlotParser.swift */,
+				A2000000000000000000003A /* VoiceIntent.swift */,
 				A20000000000000000000039 /* PhraseCatalog.swift */,
 				A20000000000000000000038 /* DialogueManager.swift */,
 				A20000000000000000000037 /* InvoiceDraft.swift */,
@@ -258,6 +264,8 @@
 				A10000000000000000000015 /* JobsCalendarView.swift in Sources */,
 				A10000000000000000000016 /* CompanyLogoSupport.swift in Sources */,
 				A10000000000000000000017 /* CompanyLogoSection.swift in Sources */,
+				A1000000000000000000003B /* SlotParser.swift in Sources */,
+				A1000000000000000000003A /* VoiceIntent.swift in Sources */,
 				A10000000000000000000039 /* PhraseCatalog.swift in Sources */,
 				A10000000000000000000038 /* DialogueManager.swift in Sources */,
 				A10000000000000000000037 /* InvoiceDraft.swift in Sources */,
