@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 /// Drives the conversation. Given an intent it mutates the draft and decides what to
 /// say next.
@@ -32,6 +33,11 @@ final class DialogueManager: ObservableObject {
     private let resolveCustomer: (String) -> (id: String, name: String)?
     private let customerCandidates: (String) -> [String]
 
+    /// SwiftUI does not observe an ObservableObject nested inside another one, so
+    /// the draft's changes are republished through this object. Without it the form
+    /// would not redraw when speech filled a field.
+    private var draftObserver: AnyCancellable?
+
     init(
         draft: InvoiceDraft = InvoiceDraft(),
         phrases: PhraseCatalog = PhraseCatalog(),
@@ -42,6 +48,12 @@ final class DialogueManager: ObservableObject {
         self.phrases = phrases
         self.resolveCustomer = resolveCustomer
         self.customerCandidates = customerCandidates
+
+        draftObserver = draft.objectWillChange
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
     }
 
     func opening() -> String {

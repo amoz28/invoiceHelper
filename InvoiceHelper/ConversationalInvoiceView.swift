@@ -13,7 +13,12 @@ struct ConversationalInvoiceView: View {
 
     @StateObject private var session = VoiceSessionController()
     @StateObject private var dialogue: DialogueManager
-    @ObservedObject private var draft: InvoiceDraft
+
+    /// Not a separate @ObservedObject. SwiftUI re-runs init on every parent redraw:
+    /// StateObject keeps the original manager while ObservedObject would take a
+    /// freshly built draft, so the form would silently unbind from the draft that
+    /// speech is filling. The manager republishes the draft's changes instead.
+    private var draft: InvoiceDraft { dialogue.draft }
 
     @State private var showCustomerPicker = false
     @State private var errorMessage: String?
@@ -31,10 +36,8 @@ struct ConversationalInvoiceView: View {
         onInvoiceCreated: @escaping (String) -> Void
     ) {
         self.onInvoiceCreated = onInvoiceCreated
-        let sharedDraft = InvoiceDraft()
-        _draft = ObservedObject(wrappedValue: sharedDraft)
         _dialogue = StateObject(wrappedValue: DialogueManager(
-            draft: sharedDraft,
+            draft: InvoiceDraft(),
             resolveCustomer: resolveCustomer,
             customerCandidates: customerCandidates
         ))

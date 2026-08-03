@@ -65,22 +65,12 @@ struct SlotParser {
             return .finish
         }
 
+        // Switching on the outer enum first, then the slot. Nested patterns like
+        // `case .slot(.customer)` are not reliably proven exhaustive by the
+        // compiler, and this reads better anyway.
         switch gap {
-        case .slot(.customer):
-            return .setCustomer(text)
-
-        case .slot(.itemQuantity):
-            if let value = firstNumber(in: text), value > 0 { return .quantity(value) }
-            return fullItem(in: text) ?? .unclear
-
-        case .slot(.itemPrice):
-            if let value = firstNumber(in: text), value > 0 { return .price(value) }
-            return fullItem(in: text) ?? .unclear
-
-        case .slot(.taxRate):
-            if Self.affirmWords.contains(lower) { return .confirmTax }
-            if let rate = firstNumber(in: text), rate >= 0, rate <= 100 { return .setTax(rate) }
-            return .unclear
+        case .slot(let slot):
+            return parse(text, lower: lower, for: slot)
 
         case .anythingElse:
             if Self.noMoreWords.contains(where: { lower == $0 || lower.hasPrefix($0) }) {
@@ -91,15 +81,35 @@ struct SlotParser {
             let more = cleanDescription(text)
             return more.isEmpty ? .unclear : .itemDescription(more)
 
-        case .slot(.itemDescription):
+        case .readyToConfirm:
+            if Self.affirmWords.contains(lower) { return .finish }
+            if let item = fullItem(in: text) { return item }
+            return .unclear
+        }
+    }
+
+    private func parse(_ text: String, lower: String, for slot: SlotID) -> VoiceIntent {
+        switch slot {
+        case .customer:
+            return .setCustomer(text)
+
+        case .itemDescription:
             if Self.noMoreWords.contains(where: { lower == $0 }) { return .noMoreItems }
             if let item = fullItem(in: text) { return item }
             let description = cleanDescription(text)
             return description.isEmpty ? .unclear : .itemDescription(description)
 
-        case .readyToConfirm:
-            if Self.affirmWords.contains(lower) { return .finish }
-            if let item = fullItem(in: text) { return item }
+        case .itemQuantity:
+            if let value = firstNumber(in: text), value > 0 { return .quantity(value) }
+            return fullItem(in: text) ?? .unclear
+
+        case .itemPrice:
+            if let value = firstNumber(in: text), value > 0 { return .price(value) }
+            return fullItem(in: text) ?? .unclear
+
+        case .taxRate:
+            if Self.affirmWords.contains(lower) { return .confirmTax }
+            if let rate = firstNumber(in: text), rate >= 0, rate <= 100 { return .setTax(rate) }
             return .unclear
         }
     }
