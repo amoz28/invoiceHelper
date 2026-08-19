@@ -387,7 +387,8 @@ struct ConversationalInvoiceView: View {
             let intent = parser.parse(
                 utterance,
                 gap: draft.nextGap,
-                isConfirming: dialogue.isAwaitingConfirmation
+                isConfirming: dialogue.isAwaitingConfirmation,
+                awaitingDescriptionConfirm: dialogue.isAwaitingDescriptionConfirm
             )
             if case .cancel = intent {
                 session.stop()
@@ -397,6 +398,7 @@ struct ConversationalInvoiceView: View {
             return dialogue.handle(intent)
         }
 
+        // Permissions only — mic opens after the opening question finishes speaking.
         await session.start()
         session.say(dialogue.opening())
     }

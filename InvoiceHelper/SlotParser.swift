@@ -2,27 +2,9 @@ import Foundation
 
 /// Turns an utterance into an intent, using the current gap as context.
 ///
-/// This is the payoff of directed dialogue. Because the app just asked a narrow
-/// question, the expected answer is narrow too: after "how many?" the utterance is
-/// almost always a bare number. Parsing per-slot is far more tractable than
-/// extracting four fields from one unstructured sentence, and each parser is small
-/// enough to unit test exhaustively.
+/// Matching is meaning-based via `VoiceMeaning` rather than exact catalog strings,
+/// so "sounds good", "that'll do", and "one more please" still land correctly.
 struct SlotParser {
-    /// Recognised for any gap, checked before slot-specific parsing.
-    private static let finishWords = ["save it", "go ahead", "send it"]
-    private static let undoWords = ["scratch that", "remove that", "delete that", "undo",
-                                    "no", "nope", "wrong", "not right"]
-    private static let cancelWords = ["cancel", "stop", "forget it", "never mind", "nevermind"]
-    private static let repeatWords = ["repeat", "say again", "read it back", "what was that"]
-    private static let skipWords = ["skip", "skip it", "skip that", "leave it", "leave that",
-                                    "not sure", "not sure yet", "don't know", "dont know",
-                                    "come back to it", "later", "pass"]
-    private static let noMoreWords = ["that's it", "thats it", "that's all", "thats all",
-                                      "nothing else", "no more", "no thanks", "that's everything",
-                                      "thats everything", "done", "finished"]
-    private static let affirmWords = ["yes", "yep", "yeah", "correct", "right", "that's right",
-                                      "thats right", "sure", "ok", "okay", "fine"]
-
     private static let numberWords: [String: Double] = [
         "zero": 0, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6,
         "seven": 7, "eight": 8, "nine": 9, "ten": 10, "eleven": 11, "twelve": 12,
@@ -37,17 +19,22 @@ struct SlotParser {
                                             "some", "a", "an", "the", "of", "for",
                                             "please", "just", "and"]
 
-    func parse(_ utterance: String, gap: InvoiceDraft.Gap, isConfirming: Bool) -> VoiceIntent {
+    func parse(
+        _ utterance: String,
+        gap: InvoiceDraft.Gap,
+        isConfirming: Bool,
+        awaitingDescriptionConfirm: Bool = false
+    ) -> VoiceIntent {
         let text = utterance.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty else { return .unclear }
-        let lower = text.lowercased()
 
-        // Global commands win over slot parsing, in priority order. Cancel before
-        // undo because "stop" should never be read as a correction.
-        if Self.cancelWords.contains(where: { lower == $0 || lower.hasPrefix($0 + " ") }) { return .cancel }
-        if Self.repeatWords.contains(where: { lower.contains($0) }) { return .repeatLast }
-        if Self.skipWords.contains(where: { lower == $0 }) { return .skip }
-        if Self.undoWords.contains(where: { lower == $0 }) { return .undo }
+        // Global commands win over slot parsing.
+        if VoiceMeaning.isCancel(text) { return .cancel }
+        if VoiceMeaning.isRepeat(text) { return .repeatLast }
+        if VoiceMeaning.isSkip(text) { return .skip }
+        if VoiceMeaning.isUndo(text) { return .undo }
+
+        let lower = text.lowercased()
 
         // Explicit overrides work at any point in the conversation.
         if lower.contains("tax") || lower.contains("vat") {
@@ -59,30 +46,46 @@ struct SlotParser {
             return .addNote(note)
         }
 
-        // Confirming the whole invoice: only yes-shaped answers finish. Anything
-        // else falls through to the slot parsers so a correction still lands.
-        if isConfirming, Self.affirmWords.contains(lower) || Self.finishWords.contains(where: { lower.hasPrefix($0) }) {
-            return .finish
+        // After a description: yes / "that's all" moves on; more words extend it.
+        // Bare "no" means the description is incomplete (prompt polarity is "is that all?").
+        if awaitingDescriptionConfirm {
+            if VoiceMeaning.isBareNegative(text) {
+                return .unclear
+            }
+            if VoiceMeaning.isAffirmative(text) || VoiceMeaning.isDescriptionComplete(text) {
+                return .confirmDescription
+            }
+            if let item = fullItem(in: text) { return item }
+            let more = cleanDescription(text)
+            return more.isEmpty ? .unclear : .itemDescription(more)
         }
 
-        // Switching on the outer enum first, then the slot. Nested patterns like
-        // `case .slot(.customer)` are not reliably proven exhaustive by the
-        // compiler, and this reads better anyway.
+        // Confirming the whole invoice.
+        if isConfirming {
+            if VoiceMeaning.isFinish(text) || VoiceMeaning.isAffirmative(text) {
+                return .finish
+            }
+        }
+
         switch gap {
         case .slot(let slot):
             return parse(text, lower: lower, for: slot)
 
         case .anythingElse:
-            if Self.noMoreWords.contains(where: { lower == $0 || lower.hasPrefix($0) }) {
+            if VoiceMeaning.isDoneOrNoMore(text) {
                 return .noMoreItems
             }
-            if Self.affirmWords.contains(lower) { return .unclear }
+            if VoiceMeaning.wantsAnotherItem(text) || VoiceMeaning.isAffirmative(text) {
+                return .moreItems
+            }
             if let item = fullItem(in: text) { return item }
             let more = cleanDescription(text)
             return more.isEmpty ? .unclear : .itemDescription(more)
 
         case .readyToConfirm:
-            if Self.affirmWords.contains(lower) { return .finish }
+            if VoiceMeaning.isAffirmative(text) || VoiceMeaning.isFinish(text) {
+                return .finish
+            }
             if let item = fullItem(in: text) { return item }
             return .unclear
         }
@@ -91,10 +94,10 @@ struct SlotParser {
     private func parse(_ text: String, lower: String, for slot: SlotID) -> VoiceIntent {
         switch slot {
         case .customer:
-            return .setCustomer(text)
+            let cleaned = VoiceMeaning.stripCustomerFiller(text)
+            return .setCustomer(cleaned.isEmpty ? text : cleaned)
 
         case .itemDescription:
-            if Self.noMoreWords.contains(where: { lower == $0 }) { return .noMoreItems }
             if let item = fullItem(in: text) { return item }
             let description = cleanDescription(text)
             return description.isEmpty ? .unclear : .itemDescription(description)
@@ -108,7 +111,7 @@ struct SlotParser {
             return fullItem(in: text) ?? .unclear
 
         case .taxRate:
-            if Self.affirmWords.contains(lower) { return .confirmTax }
+            if VoiceMeaning.isAffirmative(text) { return .confirmTax }
             if let rate = firstNumber(in: text), rate >= 0, rate <= 100 { return .setTax(rate) }
             return .unclear
         }
@@ -158,8 +161,6 @@ struct SlotParser {
         return double(ns.substring(with: match.range))
     }
 
-    /// Converts spoken number words to digits, handling "twenty five" as 25 rather
-    /// than 20 then 5. Speech recognition sometimes returns words, sometimes digits.
     private func normaliseNumbers(_ text: String) -> String {
         let tokens = text.split(separator: " ").map(String.init)
         var output: [String] = []
@@ -204,7 +205,6 @@ struct SlotParser {
             .split(separator: " ")
             .map(String.init)
 
-        // Only strip filler from the front; "a" mid-phrase is often meaningful.
         var trimmed = words
         while let first = trimmed.first,
               Self.descriptionFiller.contains(first.lowercased()),

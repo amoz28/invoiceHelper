@@ -32,6 +32,7 @@
 		A10000000000000000000017 /* CompanyLogoSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000017 /* CompanyLogoSection.swift */; };
 		A1000000000000000000003D /* ConversationalInvoiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003D /* ConversationalInvoiceView.swift */; };
 		A1000000000000000000003C /* VoiceEntityResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003C /* VoiceEntityResolver.swift */; };
+		A1000000000000000000003E /* VoiceMeaning.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003E /* VoiceMeaning.swift */; };
 		A1000000000000000000003B /* SlotParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003B /* SlotParser.swift */; };
 		A1000000000000000000003A /* VoiceIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003A /* VoiceIntent.swift */; };
 		A10000000000000000000039 /* PhraseCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000039 /* PhraseCatalog.swift */; };
@@ -78,6 +79,7 @@
 		A20000000000000000000017 /* CompanyLogoSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyLogoSection.swift; sourceTree = "<group>"; };
 		A2000000000000000000003D /* ConversationalInvoiceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationalInvoiceView.swift; sourceTree = "<group>"; };
 		A2000000000000000000003C /* VoiceEntityResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceEntityResolver.swift; sourceTree = "<group>"; };
+		A2000000000000000000003E /* VoiceMeaning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceMeaning.swift; sourceTree = "<group>"; };
 		A2000000000000000000003B /* SlotParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotParser.swift; sourceTree = "<group>"; };
 		A2000000000000000000003A /* VoiceIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceIntent.swift; sourceTree = "<group>"; };
 		A20000000000000000000039 /* PhraseCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhraseCatalog.swift; sourceTree = "<group>"; };
@@ -148,6 +150,7 @@
 				A20000000000000000000017 /* CompanyLogoSection.swift */,
 				A2000000000000000000003D /* ConversationalInvoiceView.swift */,
 				A2000000000000000000003C /* VoiceEntityResolver.swift */,
+				A2000000000000000000003E /* VoiceMeaning.swift */,
 				A2000000000000000000003B /* SlotParser.swift */,
 				A2000000000000000000003A /* VoiceIntent.swift */,
 				A20000000000000000000039 /* PhraseCatalog.swift */,
@@ -272,6 +275,7 @@
 				A10000000000000000000017 /* CompanyLogoSection.swift in Sources */,
 				A1000000000000000000003D /* ConversationalInvoiceView.swift in Sources */,
 				A1000000000000000000003C /* VoiceEntityResolver.swift in Sources */,
+				A1000000000000000000003E /* VoiceMeaning.swift in Sources */,
 				A1000000000000000000003B /* SlotParser.swift in Sources */,
 				A1000000000000000000003A /* VoiceIntent.swift in Sources */,
 				A10000000000000000000039 /* PhraseCatalog.swift in Sources */,

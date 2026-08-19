@@ -24,7 +24,8 @@ struct VoiceEntityResolver {
     /// customer means the invoice goes to the wrong person, so an unmatched name
     /// and a re-ask is much cheaper than a confident mistake.
     func resolveCustomer(_ spoken: String) -> (id: String, name: String)? {
-        let query = normalise(spoken)
+        let stripped = VoiceMeaning.stripCustomerFiller(spoken)
+        let query = normalise(stripped.isEmpty ? spoken : stripped)
         guard !query.isEmpty else { return nil }
 
         var scored: [(customer: Customer, score: Double)] = []
@@ -35,11 +36,14 @@ struct VoiceEntityResolver {
         }
 
         let ranked = scored.sorted { $0.score > $1.score }
-        guard let top = ranked.first, top.score >= 0.72 else { return nil }
+        // Slightly softer than before so near-miss dictation ("Acme" / "Ack me") still lands.
+        guard let top = ranked.first, top.score >= 0.62 else { return nil }
 
         // Reject when the runner-up is nearly as good: "Anderson" against both
         // Anderson and Andersen should ask rather than guess.
-        if ranked.count > 1, ranked[1].score >= top.score - 0.08 { return nil }
+        if ranked.count > 1, ranked[1].score >= top.score - 0.06, ranked[1].score >= 0.55 {
+            return nil
+        }
 
         return (top.customer.id, CustomerHeader.primary(top.customer))
     }

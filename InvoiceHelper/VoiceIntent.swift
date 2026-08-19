@@ -12,11 +12,15 @@ enum VoiceIntent: Equatable {
     case setTax(Double)
     /// "Yes", "that's right" when asked to confirm the 20% default.
     case confirmTax
+    /// "Yes" / "that's all" after the description confirm question.
+    case confirmDescription
     case addNote(String)
     /// "Skip", "leave it", "not sure yet".
     case skip
     /// "That's it", "nothing else" when asked whether to add more.
     case noMoreItems
+    /// "Yes" / "add another" when asked "anything else on this invoice?".
+    case moreItems
     /// "Save it", "yes" when asked to confirm the whole invoice.
     case finish
     case undo

@@ -37,6 +37,12 @@ final class VoiceDialogueTests: XCTestCase {
         XCTAssertEqual(manager.draft.nextGap, .slot(.itemDescription(0)))
 
         _ = manager.handle(.itemDescription("Rewiring"))
+        XCTAssertTrue(manager.isAwaitingDescriptionConfirm)
+        XCTAssertEqual(manager.draft.nextGap, .slot(.itemQuantity(0)),
+                       "Quantity is next once the description is confirmed")
+
+        _ = manager.handle(.confirmDescription)
+        XCTAssertFalse(manager.isAwaitingDescriptionConfirm)
         XCTAssertEqual(manager.draft.nextGap, .slot(.itemQuantity(0)))
 
         _ = manager.handle(.quantity(3))
@@ -44,6 +50,32 @@ final class VoiceDialogueTests: XCTestCase {
 
         _ = manager.handle(.price(50))
         XCTAssertEqual(manager.draft.nextGap, .anythingElse)
+    }
+
+    func testYesOnAnythingElseAddsAnotherItem() {
+        let manager = makeManager()
+        _ = manager.opening()
+        _ = manager.handle(.setCustomer("Acme Ltd"))
+        _ = manager.handle(.fullItem(description: "Rewiring", quantity: 2, price: 50))
+        XCTAssertEqual(manager.draft.nextGap, .anythingElse)
+
+        _ = manager.handle(.moreItems)
+        XCTAssertEqual(manager.draft.items.count, 2)
+        XCTAssertEqual(manager.focusedSlot, .itemDescription(1))
+        XCTAssertEqual(manager.draft.nextGap, .slot(.itemDescription(1)))
+    }
+
+    func testDescriptionConfirmCanAppendMoreWords() {
+        let manager = makeManager()
+        _ = manager.opening()
+        _ = manager.handle(.setCustomer("Acme Ltd"))
+        _ = manager.handle(.itemDescription("Boiler"))
+        XCTAssertTrue(manager.isAwaitingDescriptionConfirm)
+
+        _ = manager.handle(.itemDescription("service"))
+        XCTAssertTrue(manager.isAwaitingDescriptionConfirm)
+        XCTAssertTrue(manager.draft.items[0].description.lowercased().contains("boiler"))
+        XCTAssertTrue(manager.draft.items[0].description.lowercased().contains("service"))
     }
 
     func testTaxIsAskedLastAndOnlyOnce() {
@@ -328,5 +360,65 @@ final class VoiceDialogueTests: XCTestCase {
     func testNoMoreItemsEndsTheItemLoop() {
         let parser = SlotParser()
         XCTAssertEqual(parser.parse("that's it", gap: .anythingElse, isConfirming: false), .noMoreItems)
+    }
+
+    func testYesOnAnythingElseMeansMoreItems() {
+        let parser = SlotParser()
+        XCTAssertEqual(parser.parse("yes", gap: .anythingElse, isConfirming: false), .moreItems)
+        XCTAssertEqual(parser.parse("add another", gap: .anythingElse, isConfirming: false), .moreItems)
+    }
+
+    func testDescriptionConfirmYesMovesOn() {
+        let parser = SlotParser()
+        XCTAssertEqual(
+            parser.parse("yes", gap: .slot(.itemDescription(0)), isConfirming: false, awaitingDescriptionConfirm: true),
+            .confirmDescription
+        )
+        XCTAssertEqual(
+            parser.parse("that's all", gap: .slot(.itemDescription(0)), isConfirming: false, awaitingDescriptionConfirm: true),
+            .confirmDescription
+        )
+    }
+
+    // MARK: - Meaning-tolerant replies
+
+    func testAffirmativeSynonymsConfirmTax() {
+        let parser = SlotParser()
+        for phrase in ["sounds good", "yeah that's fine", "looks good", "perfect"] {
+            XCTAssertEqual(parser.parse(phrase, gap: .slot(.taxRate), isConfirming: false), .confirmTax,
+                           "Expected \(phrase) to confirm tax")
+        }
+    }
+
+    func testDoneSynonymsEndItemLoop() {
+        let parser = SlotParser()
+        for phrase in ["that'll do", "nothing else", "no thanks", "I'm done"] {
+            XCTAssertEqual(parser.parse(phrase, gap: .anythingElse, isConfirming: false), .noMoreItems,
+                           "Expected \(phrase) to mean no more items")
+        }
+    }
+
+    func testMoreItemSynonyms() {
+        let parser = SlotParser()
+        for phrase in ["one more", "another one", "yes please"] {
+            XCTAssertEqual(parser.parse(phrase, gap: .anythingElse, isConfirming: false), .moreItems,
+                           "Expected \(phrase) to mean add another item")
+        }
+    }
+
+    func testFinishSynonymsOnSummary() {
+        let parser = SlotParser()
+        for phrase in ["save it", "go ahead", "sounds good"] {
+            XCTAssertEqual(parser.parse(phrase, gap: .readyToConfirm, isConfirming: true), .finish,
+                           "Expected \(phrase) to finish")
+        }
+    }
+
+    func testCustomerFillerIsStripped() {
+        let parser = SlotParser()
+        XCTAssertEqual(
+            parser.parse("it's for Acme Ltd", gap: .slot(.customer), isConfirming: false),
+            .setCustomer("Acme Ltd")
+        )
     }
 }

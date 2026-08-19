@@ -46,8 +46,9 @@ final class VoiceSessionController: NSObject, ObservableObject {
     /// Words to bias recognition towards, typically customer and saved item names.
     var contextualStrings: [String] = []
 
-    /// How long a pause ends the user's turn.
-    var endpointSilence: TimeInterval = 1.2
+    /// How long a pause ends the user's turn. Kept short so replies feel snappy;
+    /// echo rejection + post-speech cooldown prevent the app from hearing itself.
+    var endpointSilence: TimeInterval = 0.85
 
     private let audioEngine = AVAudioEngine()
     private let synthesizer = AVSpeechSynthesizer()
@@ -57,6 +58,15 @@ final class VoiceSessionController: NSObject, ObservableObject {
     private var lastTranscriptChange = Date()
     /// Set while the app is talking, so its own voice is not treated as user input.
     private var suppressRecognition = false
+    /// Last line spoken by the app — used to reject speaker echo as a fake answer.
+    private var lastSpokenLine = ""
+    /// Generation token so a delayed post-speech cooldown cannot restart listening
+    /// after stop / barge-in / a newer speak cycle.
+    private var listenGeneration = 0
+    /// Skip the post-speech pause once (barge-in should listen immediately).
+    private var skipNextSpeechCooldown = false
+    /// Quiet gap after TTS so room echo is not transcribed as the user's answer.
+    private let postSpeechCooldownNanoseconds: UInt64 = 380_000_000
 
     override init() {
         super.init()
@@ -65,15 +75,18 @@ final class VoiceSessionController: NSObject, ObservableObject {
 
     // MARK: - Session lifecycle
 
+    /// Requests permissions and resets session state. Does **not** open the mic —
+    /// call `say(_:)` for the opening line so listening starts only after speech ends.
     func start() async {
         guard case .idle = state else { return }
         guard await requestPermissions() else { return }
         exchanges.removeAll()
         partialTranscript = ""
-        beginListening()
+        lastSpokenLine = ""
     }
 
     func stop() {
+        listenGeneration += 1
         silenceTimer?.invalidate()
         silenceTimer = nil
         endRecognition()
@@ -81,10 +94,13 @@ final class VoiceSessionController: NSObject, ObservableObject {
         deactivateSession()
         state = .idle
         partialTranscript = ""
+        suppressRecognition = false
+        skipNextSpeechCooldown = false
+        isSuspended = false
     }
 
     /// Speaks a line without expecting the user to have said anything first,
-    /// used for the opening question.
+    /// used for the opening question. Listening resumes only after speech finishes.
     func say(_ line: String) {
         guard !line.isEmpty else { return }
         exchanges.append(Exchange(speaker: .app, text: line))
@@ -104,7 +120,8 @@ final class VoiceSessionController: NSObject, ObservableObject {
         do {
             let session = AVAudioSession.sharedInstance()
             // playAndRecord so the synthesizer can speak without tearing the session down.
-            try session.setCategory(.playAndRecord, mode: .voiceChat, options: [.duckOthers, .defaultToSpeaker])
+            // Allow Bluetooth; keep defaultToSpeaker so prompts are audible without headphones.
+            try session.setCategory(.playAndRecord, mode: .spokenAudio, options: [.duckOthers, .defaultToSpeaker, .allowBluetooth])
             try session.setActive(true, options: .notifyOthersOnDeactivation)
         } catch {
             state = .failed("Could not start audio: \(error.localizedDescription)")
@@ -113,7 +130,9 @@ final class VoiceSessionController: NSObject, ObservableObject {
 
         let req = SFSpeechAudioBufferRecognitionRequest()
         req.shouldReportPartialResults = true
-        req.requiresOnDeviceRecognition = recognizer.supportsOnDeviceRecognition
+        // Prefer Apple's cloud recognizer when available — faster finals and better
+        // natural-language accuracy than forcing on-device for short conversational turns.
+        req.requiresOnDeviceRecognition = false
         if !contextualStrings.isEmpty {
             req.contextualStrings = Array(contextualStrings.prefix(100))
         }
@@ -142,18 +161,30 @@ final class VoiceSessionController: NSObject, ObservableObject {
         state = .listening
         partialTranscript = ""
         lastTranscriptChange = Date()
+        suppressRecognition = false
         startSilenceTimer()
 
         task = recognizer.recognitionTask(with: req) { [weak self] result, error in
             Task { @MainActor in
                 guard let self else { return }
                 guard !self.suppressRecognition else { return }
+                guard case .listening = self.state else { return }
 
                 if let result {
                     let text = result.bestTranscription.formattedString
+                    if self.isLikelyEcho(text) {
+                        // Keep listening; do not advance the silence clock on echo.
+                        return
+                    }
                     if text != self.partialTranscript {
                         self.partialTranscript = text
                         self.lastTranscriptChange = Date()
+                    }
+                    // Recognizer finals often arrive before our silence timer — take them.
+                    if result.isFinal,
+                       !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        self.finishTurn()
+                        return
                     }
                 }
                 if error != nil {
@@ -161,8 +192,11 @@ final class VoiceSessionController: NSObject, ObservableObject {
                     // only fatal if we have nothing at all to work with.
                     if self.partialTranscript.isEmpty {
                         self.beginListening()
-                    } else {
+                    } else if !self.isLikelyEcho(self.partialTranscript) {
                         self.finishTurn()
+                    } else {
+                        self.partialTranscript = ""
+                        self.beginListening()
                     }
                 }
             }
@@ -173,10 +207,15 @@ final class VoiceSessionController: NSObject, ObservableObject {
     /// dictation and waits too long to feel conversational.
     private func startSilenceTimer() {
         silenceTimer?.invalidate()
-        silenceTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
+        silenceTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             Task { @MainActor in
                 guard let self, case .listening = self.state else { return }
-                guard !self.partialTranscript.isEmpty else { return }
+                let text = self.partialTranscript.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !text.isEmpty else { return }
+                if self.isLikelyEcho(text) {
+                    self.partialTranscript = ""
+                    return
+                }
                 if Date().timeIntervalSince(self.lastTranscriptChange) >= self.endpointSilence {
                     self.finishTurn()
                 }
@@ -187,6 +226,11 @@ final class VoiceSessionController: NSObject, ObservableObject {
     private func finishTurn() {
         let utterance = partialTranscript.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !utterance.isEmpty else { return }
+        guard !isLikelyEcho(utterance) else {
+            partialTranscript = ""
+            lastTranscriptChange = Date()
+            return
+        }
 
         silenceTimer?.invalidate()
         silenceTimer = nil
@@ -224,23 +268,107 @@ final class VoiceSessionController: NSObject, ObservableObject {
     // MARK: - Speaking
 
     private func speak(_ line: String) {
+        listenGeneration += 1
         state = .speaking
         suppressRecognition = true
+        silenceTimer?.invalidate()
+        silenceTimer = nil
         endRecognition()
+        lastSpokenLine = line
 
         let utterance = AVSpeechUtterance(string: line)
-        utterance.voice = AVSpeechSynthesisVoice(language: locale.identifier)
-            ?? AVSpeechSynthesisVoice(language: "en-GB")
-        utterance.rate = AVSpeechUtteranceDefaultSpeechRate
-        utterance.postUtteranceDelay = 0.1
+        utterance.voice = preferredVoice()
+        // Near-default rate with a slight warm tilt; premium/enhanced voices carry naturalness.
+        utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.96
+        utterance.pitchMultiplier = 1.02
+        utterance.preUtteranceDelay = 0.05
+        utterance.postUtteranceDelay = 0.05
         synthesizer.speak(utterance)
+    }
+
+    /// Prefers premium/enhanced voices for the session locale (downloadable in Settings →
+    /// Accessibility → Spoken Content → Voices). Falls back gracefully if only compact voices exist.
+    private func preferredVoice() -> AVSpeechSynthesisVoice? {
+        let preferred = locale.identifier
+        let voices = AVSpeechSynthesisVoice.speechVoices()
+
+        func qualityScore(_ quality: AVSpeechSynthesisVoiceQuality) -> Int {
+            switch quality {
+            case .premium: return 50
+            case .enhanced: return 30
+            default: return 0
+            }
+        }
+
+        func languageScore(_ language: String) -> Int {
+            if language == preferred { return 100 }
+            if language.hasPrefix("en-GB"), preferred.hasPrefix("en") { return 80 }
+            if language.hasPrefix("en"), preferred.hasPrefix("en") { return 40 }
+            if language.hasPrefix(String(preferred.prefix(2))) { return 20 }
+            return -1
+        }
+
+        func nameBonus(_ name: String) -> Int {
+            let n = name.lowercased()
+            var bonus = 0
+            if n.contains("siri") { bonus += 12 }
+            // Natural-sounding English voices commonly installed on iOS.
+            for hint in ["martha", "arthur", "daniel", "kate", "serena", "moira", "samantha", "aaron"] {
+                if n.contains(hint) { bonus += 8; break }
+            }
+            return bonus
+        }
+
+        let ranked = voices.compactMap { voice -> (AVSpeechSynthesisVoice, Int)? in
+            let lang = languageScore(voice.language)
+            guard lang >= 0 else { return nil }
+            return (voice, lang + qualityScore(voice.quality) + nameBonus(voice.name))
+        }.sorted { $0.1 > $1.1 }
+
+        if let best = ranked.first { return best.0 }
+        return AVSpeechSynthesisVoice(language: "en-GB")
+            ?? AVSpeechSynthesisVoice(language: "en-US")
     }
 
     /// Lets the user talk over the app. Called by the view when the mic button is tapped
     /// while the app is mid-sentence.
     func bargeIn() {
         guard case .speaking = state else { return }
+        listenGeneration += 1
+        skipNextSpeechCooldown = true
         synthesizer.stopSpeaking(at: .immediate)
+        // Listen immediately; the cancel callback must not schedule another cooldown.
+        suppressRecognition = false
+        beginListening()
+        skipNextSpeechCooldown = false
+    }
+
+    // MARK: - Echo rejection
+
+    /// Speaker output often lands back in the mic right after TTS. Reject transcripts
+    /// that are mostly the line we just spoke.
+    private func isLikelyEcho(_ transcript: String) -> Bool {
+        let spoken = normalizedForEcho(lastSpokenLine)
+        let heard = normalizedForEcho(transcript)
+        guard !spoken.isEmpty, !heard.isEmpty else { return false }
+
+        if spoken.contains(heard), heard.count >= 4 { return true }
+        if heard.contains(spoken), spoken.count >= 8 { return true }
+
+        let spokenTokens = Set(spoken.split(separator: " ").map(String.init).filter { $0.count > 2 })
+        let heardTokens = Set(heard.split(separator: " ").map(String.init).filter { $0.count > 2 })
+        guard !heardTokens.isEmpty, !spokenTokens.isEmpty else { return false }
+        let overlap = spokenTokens.intersection(heardTokens).count
+        let ratio = Double(overlap) / Double(heardTokens.count)
+        return ratio >= 0.7 && overlap >= 2
+    }
+
+    private func normalizedForEcho(_ text: String) -> String {
+        text
+            .lowercased()
+            .components(separatedBy: CharacterSet.alphanumerics.inverted)
+            .filter { !$0.isEmpty }
+            .joined(separator: " ")
     }
 
     // MARK: - Suspend and resume
@@ -255,12 +383,14 @@ final class VoiceSessionController: NSObject, ObservableObject {
     func suspend() {
         guard !isSuspended, state.isActive else { return }
         isSuspended = true
+        listenGeneration += 1
         synthesizer.stopSpeaking(at: .immediate)
         silenceTimer?.invalidate()
         silenceTimer = nil
         endRecognition()
         deactivateSession()
         partialTranscript = ""
+        suppressRecognition = false
         state = .idle
     }
 
@@ -295,6 +425,25 @@ final class VoiceSessionController: NSObject, ObservableObject {
         }
         return true
     }
+
+    private func scheduleListenAfterSpeech() {
+        let generation = listenGeneration
+        if skipNextSpeechCooldown {
+            skipNextSpeechCooldown = false
+            suppressRecognition = false
+            beginListening()
+            return
+        }
+
+        suppressRecognition = true
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: postSpeechCooldownNanoseconds)
+            guard generation == listenGeneration else { return }
+            guard case .speaking = state else { return }
+            suppressRecognition = false
+            beginListening()
+        }
+    }
 }
 
 // MARK: - AVSpeechSynthesizerDelegate
@@ -308,14 +457,15 @@ extension VoiceSessionController: AVSpeechSynthesizerDelegate {
 
     nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
         Task { @MainActor in
+            // Barge-in already opened the mic; ignore this callback.
+            guard case .speaking = state else { return }
             handleSpeechEnded()
         }
     }
 
     @MainActor
     private func handleSpeechEnded() {
-        suppressRecognition = false
         guard case .speaking = state else { return }
-        beginListening()
+        scheduleListenAfterSpeech()
     }
 }

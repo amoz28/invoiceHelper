@@ -12,66 +12,148 @@ struct PhraseCatalog {
     // MARK: - Prompts
 
     func askCustomer() -> String {
-        pick(["Who's this invoice for?", "Which customer is this for?"])
+        pick([
+            "Who's this invoice for?",
+            "Which customer should I put this under?",
+            "Alright — who's it for?",
+        ])
     }
 
     func customerNotFound(_ spoken: String) -> String {
-        "I couldn't find \(spoken) in your customers. Who's it for?"
+        pick([
+            "Hmm, I couldn't find \(spoken) in your customers. Who's it for?",
+            "I don't have anyone called \(spoken). Can you say the customer name again?",
+        ])
     }
 
     func customerAmbiguous(_ names: [String]) -> String {
         let list = names.joined(separator: ", or ")
-        return "Did you mean \(list)?"
+        return pick([
+            "Did you mean \(list)?",
+            "Just to check — \(list)?",
+        ])
     }
 
     func askDescription(isFirst: Bool) -> String {
         isFirst
-            ? pick(["What did you do for them?", "What's the work?"])
-            : pick(["What's the next item?", "What else did you do?"])
+            ? pick([
+                "What work should I put down?",
+                "What did you do for them?",
+                "Okay — what's the first item?",
+            ])
+            : pick([
+                "What's next?",
+                "What else should I add?",
+                "Alright, what's the next item?",
+            ])
+    }
+
+    /// Asked after a description so a pause mid-sentence does not steal the turn.
+    /// All variants share the same yes/no polarity: yes / "that's all" means move on.
+    func confirmDescriptionDone() -> String {
+        pick([
+            "Got it. Is that all for the description?",
+            "Okay. Is that the full description?",
+            "Thanks. Shall I move on with that description?",
+        ])
     }
 
     func askQuantity() -> String {
-        pick(["How many?", "How many of those?"])
+        pick([
+            "How many?",
+            "And how many of those?",
+            "Quantity?",
+        ])
     }
 
     func askPrice() -> String {
-        pick(["At what price?", "What's the rate?"])
+        pick([
+            "And the price?",
+            "What's the unit price?",
+            "At what rate?",
+        ])
     }
 
     func askAnythingElse() -> String {
-        pick(["Anything else on this invoice?", "Is that everything?"])
+        pick([
+            "Anything else on this invoice?",
+            "Want to add another item?",
+            "Is that everything, or one more item?",
+        ])
     }
 
     func confirmTaxDefault(_ rate: Double) -> String {
-        "Tax is \(number(rate)) percent, is that right?"
+        pick([
+            "Tax is \(number(rate)) percent — does that sound right?",
+            "I'll use \(number(rate)) percent tax, okay?",
+        ])
     }
 
     // MARK: - Acknowledgements
 
+    func ack() -> String {
+        pick(["Got it.", "Okay.", "Nice.", "Perfect.", "Alright."])
+    }
+
     func skipped(_ what: String) -> String {
-        "Alright, I'll come back to the \(what)."
+        pick([
+            "No problem — I'll come back to the \(what).",
+            "Okay, skipping the \(what) for now.",
+        ])
     }
 
     func quantityAssumed() -> String {
-        "I'll put it down as one for now."
+        pick([
+            "I'll put that down as one for now.",
+            "Okay, quantity one.",
+        ])
     }
 
     func revisiting(_ what: String, prompt: String) -> String {
-        "Back to the \(what). " + prompt
+        "Just circling back to the \(what). " + prompt
     }
 
     func taxSet(_ rate: Double) -> String {
-        "Tax set to \(number(rate)) percent."
+        "Okay, tax set to \(number(rate)) percent."
     }
 
-    func noteAdded() -> String { "Note added." }
-    func removedLastItem() -> String { "Removed the last item." }
-    func cancelled() -> String { "Alright, I've stopped. Nothing was saved." }
-    func whatShouldChange() -> String { "What should I change?" }
-    func saving() -> String { "Saving it now." }
+    func noteAdded() -> String {
+        pick(["Note added.", "Okay, I've added that note."])
+    }
+
+    func removedLastItem() -> String {
+        pick(["Removed the last item.", "Okay, that last item's gone."])
+    }
+
+    func cancelled() -> String {
+        "Alright, I've stopped. Nothing was saved."
+    }
+
+    func whatShouldChange() -> String {
+        pick([
+            "No problem — what should I change?",
+            "Okay, what needs changing?",
+        ])
+    }
+
+    func saving() -> String {
+        pick(["Saving it now.", "Okay, saving that for you."])
+    }
+
+    func startingNextItem() -> String {
+        pick([
+            "Sure — what's the next item?",
+            "Alright, what should I add?",
+            "Okay. What work is next?",
+        ])
+    }
 
     func didNotCatch(_ retry: String?) -> String {
-        let opener = pick(["Sorry, I didn't catch that.", "I missed that."])
+        let opener = pick([
+            "Sorry, I didn't catch that.",
+            "I missed that — one more time?",
+            "Hmm, I didn't quite get that.",
+        ])
         guard let retry else { return opener }
         return opener + " " + retry
     }
@@ -85,18 +167,19 @@ struct PhraseCatalog {
 
     /// Always names the customer, every line, and the total. This is the user's one
     /// chance to catch a misheard amount before a wrong invoice reaches a client.
+    @MainActor
     func confirmSummary(_ draft: InvoiceDraft) -> String {
         var parts: [String] = []
         if let customer = draft.customerName {
-            parts.append("This is for \(customer).")
+            parts.append("So this is for \(customer).")
         }
         for item in draft.completeItems {
             parts.append("\(number(item.quantity ?? 0)) \(item.description) at \(number(item.unitPrice ?? 0)).")
         }
         if draft.taxRate > 0 {
-            parts.append("With \(number(draft.taxRate)) percent tax, the total is \(number(draft.total)).")
+            parts.append("With \(number(draft.taxRate)) percent tax, that comes to \(number(draft.total)).")
         } else {
-            parts.append("The total is \(number(draft.total)).")
+            parts.append("That comes to \(number(draft.total)).")
         }
         parts.append("Shall I save it?")
         return parts.joined(separator: " ")

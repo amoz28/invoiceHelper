@@ -16,6 +16,8 @@ final class DialogueManager: ObservableObject {
     /// a field writes back here so the next thing said lands in the right place.
     @Published var focusedSlot: SlotID?
     @Published private(set) var isAwaitingConfirmation = false
+    /// After a description is captured, wait for "yes / that's all" before quantity.
+    @Published private(set) var isAwaitingDescriptionConfirm = false
     @Published private(set) var isComplete = false
 
     /// True once the user has filled several fields by hand in a row. The manager
@@ -39,7 +41,7 @@ final class DialogueManager: ObservableObject {
     private var draftObserver: AnyCancellable?
 
     init(
-        draft: InvoiceDraft = InvoiceDraft(),
+        draft: InvoiceDraft,
         phrases: PhraseCatalog = PhraseCatalog(),
         resolveCustomer: @escaping (String) -> (id: String, name: String)?,
         customerCandidates: @escaping (String) -> [String] = { _ in [] }
@@ -73,6 +75,10 @@ final class DialogueManager: ObservableObject {
             return handleWhileConfirming(intent)
         }
 
+        if isAwaitingDescriptionConfirm {
+            return handleDescriptionConfirm(intent)
+        }
+
         switch intent {
         case .setCustomer(let spoken):
             guard let match = resolveCustomer(spoken) else {
@@ -82,27 +88,35 @@ final class DialogueManager: ObservableObject {
                     : phrases.customerAmbiguous(candidates)
             }
             draft.setCustomer(id: match.id, name: match.name)
-            return advance()
+            return advance(prefix: phrases.ack())
 
         case .itemDescription(let text):
             let index = targetItemIndex(for: .itemDescription(0))
             draft.setDescription(text, at: index)
-            return advance()
+            isAwaitingDescriptionConfirm = true
+            focusedSlot = .itemDescription(index)
+            return phrases.confirmDescriptionDone()
+
+        case .confirmDescription:
+            // Should only arrive while awaiting description confirm.
+            isAwaitingDescriptionConfirm = false
+            return advance(prefix: phrases.ack())
 
         case .quantity(let value):
             draft.setQuantity(value, at: targetItemIndex(for: .itemQuantity(0)))
-            return advance()
+            return advance(prefix: phrases.ack())
 
         case .price(let value):
             draft.setUnitPrice(value, at: targetItemIndex(for: .itemPrice(0)))
-            return advance()
+            return advance(prefix: phrases.ack())
 
         case .fullItem(let description, let quantity, let price):
             let index = targetItemIndex(for: .itemDescription(0))
+            isAwaitingDescriptionConfirm = false
             draft.setDescription(description, at: index)
             draft.setQuantity(quantity, at: index)
             draft.setUnitPrice(price, at: index)
-            return advance()
+            return advance(prefix: phrases.ack())
 
         case .setTax(let rate):
             draft.setTaxRate(rate)
@@ -110,7 +124,7 @@ final class DialogueManager: ObservableObject {
 
         case .confirmTax:
             draft.setTaxRate(draft.taxRate)
-            return advance()
+            return advance(prefix: phrases.ack())
 
         case .addNote(let text):
             draft.notes = [draft.notes, text].compactMap { $0 }.joined(separator: "\n")
@@ -121,7 +135,14 @@ final class DialogueManager: ObservableObject {
 
         case .noMoreItems:
             draft.itemsFinished = true
-            return advance()
+            return advance(prefix: phrases.ack())
+
+        case .moreItems:
+            draft.itemsFinished = false
+            draft.appendItem()
+            let index = draft.items.count - 1
+            focusedSlot = .itemDescription(index)
+            return phrases.startingNextItem()
 
         case .finish:
             guard draft.canSave else {
@@ -132,6 +153,7 @@ final class DialogueManager: ObservableObject {
             return phrases.confirmSummary(draft)
 
         case .undo:
+            isAwaitingDescriptionConfirm = false
             draft.removeItem(at: max(draft.items.count - 1, 0))
             return advance(prefix: phrases.removedLastItem())
 
@@ -143,6 +165,50 @@ final class DialogueManager: ObservableObject {
 
         case .unclear:
             return phrases.didNotCatch(promptForCurrentGap())
+        }
+    }
+
+    /// "Is that all for the description?" — yes moves on; more words extend it.
+    private func handleDescriptionConfirm(_ intent: VoiceIntent) -> String? {
+        switch intent {
+        case .confirmDescription, .noMoreItems, .finish, .confirmTax:
+            isAwaitingDescriptionConfirm = false
+            return advance(prefix: phrases.ack())
+
+        case .itemDescription(let text):
+            let index = focusedSlot?.itemIndex
+                ?? targetItemIndex(for: .itemDescription(0))
+            let existing: String
+            if draft.items.indices.contains(index) {
+                existing = draft.items[index].description.trimmingCharacters(in: .whitespacesAndNewlines)
+            } else {
+                existing = ""
+            }
+            let combined = existing.isEmpty ? text : existing + " " + text
+            draft.setDescription(combined, at: index)
+            focusedSlot = .itemDescription(index)
+            return phrases.confirmDescriptionDone()
+
+        case .fullItem(let description, let quantity, let price):
+            let index = focusedSlot?.itemIndex
+                ?? targetItemIndex(for: .itemDescription(0))
+            isAwaitingDescriptionConfirm = false
+            draft.setDescription(description, at: index)
+            draft.setQuantity(quantity, at: index)
+            draft.setUnitPrice(price, at: index)
+            return advance(prefix: phrases.ack())
+
+        case .skip:
+            isAwaitingDescriptionConfirm = false
+            return skipCurrent()
+
+        case .unclear:
+            return phrases.didNotCatch(phrases.confirmDescriptionDone())
+
+        default:
+            // Unexpected slot answers while confirming description: treat as more description text when possible.
+            isAwaitingDescriptionConfirm = false
+            return handle(intent)
         }
     }
 
@@ -206,6 +272,7 @@ final class DialogueManager: ObservableObject {
     }
 
     private func skipCurrent() -> String? {
+        isAwaitingDescriptionConfirm = false
         guard let slot = focusedSlot else {
             draft.itemsFinished = true
             return advance()
@@ -222,6 +289,9 @@ final class DialogueManager: ObservableObject {
     }
 
     private func promptForCurrentGap() -> String? {
+        if isAwaitingDescriptionConfirm {
+            return phrases.confirmDescriptionDone()
+        }
         switch draft.nextGap {
         case .slot(let slot): return promptFor(slot)
         case .anythingElse: return phrases.askAnythingElse()

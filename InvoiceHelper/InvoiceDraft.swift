@@ -136,7 +136,7 @@ final class InvoiceDraft: ObservableObject {
     // MARK: - Saving
 
     var hasAnyCompleteItem: Bool {
-        items.contains(\.isComplete)
+        items.contains(where: \.isComplete)
     }
 
     var completeItems: [DraftItem] {
