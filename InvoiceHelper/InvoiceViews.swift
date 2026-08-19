@@ -46,8 +46,16 @@ struct InvoiceListRowContent: View {
 }
 
 struct InvoiceListView: View {
+    enum Focus: Hashable {
+        case all
+        case overdue
+        case awaitingPayment
+    }
+
     @EnvironmentObject private var store: AppStore
     @Environment(\.colorScheme) private var colorScheme
+    /// Deep-link filter from dashboard attention chips.
+    var focus: Focus = .all
     @State private var previewInvoiceId: String?
     @State private var showInvoicePreview = false
     /// One-shot filter from “navigate to this customer’s invoices” (e.g. after sharing an invoice).
@@ -58,11 +66,46 @@ struct InvoiceListView: View {
     @State private var listErrorMessage: String?
 
     private var displayedInvoices: [Invoice] {
-        let base = store.filteredInvoices
-        if let id = listCustomerFilterId {
-            return base.filter { $0.customerId == id }
+        let scoped: [Invoice]
+        switch focus {
+        case .all:
+            scoped = store.filteredInvoices
+        case .overdue:
+            scoped = store.invoices.filter { $0.status == .overdue }
+        case .awaitingPayment:
+            scoped = store.pendingDraftOrSentInvoices
         }
-        return base
+
+        let searched: [Invoice]
+        if focus == .all {
+            searched = scoped
+        } else {
+            let q = store.invoiceSearch.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            if q.isEmpty {
+                searched = scoped
+            } else {
+                searched = scoped.filter { inv in
+                    if inv.invoiceNumber.lowercased().contains(q) { return true }
+                    if let c = store.customers.first(where: { $0.id == inv.customerId }) {
+                        return c.name.lowercased().contains(q) || c.email.lowercased().contains(q)
+                    }
+                    return false
+                }
+            }
+        }
+
+        if let id = listCustomerFilterId {
+            return searched.filter { $0.customerId == id }
+        }
+        return searched.sorted { $0.createdAt > $1.createdAt }
+    }
+
+    private var navigationTitleText: String {
+        switch focus {
+        case .all: return "Invoices"
+        case .overdue: return "Overdue"
+        case .awaitingPayment: return "Awaiting payment"
+        }
     }
 
     /// On white list rows (light mode), use black for readability.
@@ -72,7 +115,7 @@ struct InvoiceListView: View {
 
     var body: some View {
         List {
-            if !store.invoices.isEmpty {
+            if focus == .all, !store.invoices.isEmpty {
                 Picker("Status", selection: Binding(
                     get: { store.invoiceStatusFilter },
                     set: { store.invoiceStatusFilter = $0 }
@@ -81,6 +124,15 @@ struct InvoiceListView: View {
                     ForEach(InvoiceStatus.allCases, id: \.self) { s in
                         Text(s.rawValue.replacingOccurrences(of: "_", with: " ")).tag(Optional(s))
                     }
+                }
+            }
+            if focus != .all {
+                Section {
+                    Text(focus == .overdue
+                         ? "Showing overdue invoices only"
+                         : "Showing draft and sent invoices awaiting payment")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
                 }
             }
             if let fid = listCustomerFilterId, let c = store.customers.first(where: { $0.id == fid }) {
@@ -115,7 +167,7 @@ struct InvoiceListView: View {
         .navigationDestination(for: InvoiceDetailNavigationID.self) { route in
             InvoiceDetailView(invoiceId: route.invoiceId)
         }
-        .navigationTitle("Invoices")
+        .navigationTitle(navigationTitleText)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
