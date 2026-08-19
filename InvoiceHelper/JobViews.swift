@@ -38,15 +38,12 @@ struct JobListView: View {
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             VStack(spacing: 0) {
-                Picker("View", selection: $viewMode) {
-                    ForEach(ViewMode.allCases, id: \.self) { mode in
-                        Text(mode.rawValue).tag(mode)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .frame(maxWidth: .infinity)
+                AppSegmentedTabs(
+                    tabs: ViewMode.allCases.map { ($0, $0.rawValue) },
+                    selection: $viewMode
+                )
                 .padding(.horizontal, 12)
-                .padding(.vertical, 6)
+                .padding(.vertical, 8)
                 .background(Color(.systemGroupedBackground))
                 .zIndex(1)
 
@@ -216,9 +213,9 @@ struct JobListView: View {
                 )
                 .frame(maxWidth: .infinity)
             }
-            .padding(EdgeInsets(top: 10, leading: 12, bottom: 12, trailing: 12))
-            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .padding(EdgeInsets(top: 12, leading: 12, bottom: 12, trailing: 12))
+            .background(AppSurfaceCard())
+            .clipShape(RoundedRectangle(cornerRadius: AppTheme.surfaceCorner, style: .continuous))
 
             if let d = selectedCalendarDate {
                 HStack {
@@ -400,25 +397,27 @@ private struct JobListRowCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            HStack(alignment: .top) {
+            HStack(alignment: .top, spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(job.title)
-                        .font(.headline)
+                        .font(.body.weight(.semibold))
                         .foregroundStyle(.primary)
+                        .lineLimit(2)
                     Text(job.customerName)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
+                        .lineLimit(1)
                     Text(dateLine)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-                Spacer()
-                Text(job.status.rawValue.replacingOccurrences(of: "_", with: " ").uppercased())
-                    .font(.caption.weight(.bold))
-                    .foregroundStyle(.white)
+                Spacer(minLength: 8)
+                Text(job.status.rawValue.replacingOccurrences(of: "_", with: " ").capitalized)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(AppTheme.jobStatusColor(job.status))
                     .padding(.horizontal, 10)
-                    .padding(.vertical, 4)
-                    .background(AppTheme.jobStatusColor(job.status), in: Capsule())
+                    .padding(.vertical, 5)
+                    .background(AppTheme.jobStatusColor(job.status).opacity(0.15), in: Capsule())
             }
             if job.isRecurring {
                 Label("Recurring: \(job.recurringFrequency.rawValue)", systemImage: "repeat")
@@ -432,9 +431,9 @@ private struct JobListRowCard: View {
                 }
             }
         }
-        .padding()
+        .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(AppSurfaceCard())
     }
 
     private var dateLine: String {
@@ -488,61 +487,91 @@ struct JobDetailView: View {
     var body: some View {
         Group {
             if let job {
-                List {
-                    Section("Job") {
-                        LabeledContent("Title", value: job.title)
-                        LabeledContent("Customer", value: job.customerName)
-                        Picker("Status", selection: statusBinding(for: job)) {
-                            ForEach(JobStatus.allCases, id: \.self) { s in
-                                Text(s.rawValue.replacingOccurrences(of: "_", with: " ").capitalized).tag(s)
-                            }
-                        }
-                    }
-                    Section("Schedule") {
-                        LabeledContent("Start", value: shortDate(job.startDate))
-                        LabeledContent("End", value: shortDate(job.endDate))
-                        if job.isRecurring {
-                            LabeledContent("Recurring", value: job.recurringFrequency.rawValue)
-                            if let n = job.nextOccurrence {
-                                LabeledContent("Next", value: shortDate(n))
-                            }
-                        }
-                    }
-                    if let d = job.description, !d.isEmpty { Section("Description") { Text(d) } }
-                    if let a = job.customerAddress, !a.isEmpty { Section("Address") { Text(a) } }
-                    Section("Notes") {
-                        if job.noteEntries.isEmpty {
-                            Text("No notes yet")
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 16) {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text(job.title)
+                                .font(.title2.weight(.bold))
+                            Text(job.customerName)
+                                .font(.subheadline)
                                 .foregroundStyle(.secondary)
-                        } else {
-                            ForEach(job.noteEntries.sorted(by: { $0.createdAt < $1.createdAt })) { entry in
-                                VStack(alignment: .leading, spacing: 6) {
-                                    Text(noteTimestampLabel(entry.createdAt))
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                    Text(entry.text)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
+                            AppSegmentedTabs(
+                                tabs: JobStatus.allCases.map {
+                                    ($0, $0.rawValue.replacingOccurrences(of: "_", with: " ").capitalized)
+                                },
+                                selection: statusBinding(for: job)
+                            )
+                        }
+                        .padding(16)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(AppSurfaceCard())
+
+                        sectionCard(title: "Schedule") {
+                            labeled("Start", shortDate(job.startDate))
+                            labeled("End", shortDate(job.endDate))
+                            if job.isRecurring {
+                                labeled("Recurring", job.recurringFrequency.rawValue)
+                                if let n = job.nextOccurrence {
+                                    labeled("Next", shortDate(n))
                                 }
-                                .padding(.vertical, 4)
                             }
                         }
-                        Button {
-                            newNoteText = ""
-                            showAddNote = true
-                        } label: {
-                            Label("Add note", systemImage: "plus.circle.fill")
+
+                        if let d = job.description, !d.isEmpty {
+                            sectionCard(title: "Description") { Text(d) }
+                        }
+                        if let a = job.customerAddress, !a.isEmpty {
+                            sectionCard(title: "Address") { Text(a) }
+                        }
+
+                        sectionCard(title: "Notes") {
+                            let notes = job.noteEntries.sorted(by: { $0.createdAt < $1.createdAt })
+                            if notes.isEmpty {
+                                Text("No notes yet")
+                                    .foregroundStyle(.secondary)
+                            } else {
+                                ForEach(Array(notes.enumerated()), id: \.element.id) { index, entry in
+                                    VStack(alignment: .leading, spacing: 6) {
+                                        Text(noteTimestampLabel(entry.createdAt))
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                        Text(entry.text)
+                                    }
+                                    if index < notes.count - 1 {
+                                        Divider().padding(.vertical, 8)
+                                    }
+                                }
+                            }
+                            Button {
+                                newNoteText = ""
+                                showAddNote = true
+                            } label: {
+                                Label("Add note", systemImage: "plus.circle.fill")
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundStyle(AppTheme.infoBlue)
+                                    .padding(.top, 8)
+                            }
+                            .buttonStyle(.plain)
+                        }
+
+                        sectionCard(title: "Reminder") {
+                            Text(job.hasReminder ? "On" : "Off")
+                                .font(.body.weight(.medium))
                         }
                     }
-                    Section {
-                        LabeledContent("Reminder", value: job.hasReminder ? "On" : "Off")
-                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                    .padding(.bottom, 32)
                 }
-                .navigationTitle(job.title)
+                .background(Color(.systemGroupedBackground))
+                .navigationTitle("Job")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .primaryAction) {
-                        NavigationLink("Edit") {
+                        NavigationLink {
                             JobEditorView(job: job)
+                        } label: {
+                            Text("Edit").fontWeight(.semibold)
                         }
                     }
                 }
@@ -580,6 +609,28 @@ struct JobDetailView: View {
             } else {
                 ContentUnavailableView("Job not found", systemImage: "calendar")
             }
+        }
+    }
+
+    private func sectionCard<Content: View>(title: String, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(title)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .textCase(.uppercase)
+            VStack(alignment: .leading, spacing: 8) {
+                content()
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(14)
+            .background(AppSurfaceCard())
+        }
+    }
+
+    private func labeled(_ title: String, _ value: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title).font(.caption).foregroundStyle(.secondary)
+            Text(value).font(.body.weight(.medium))
         }
     }
 

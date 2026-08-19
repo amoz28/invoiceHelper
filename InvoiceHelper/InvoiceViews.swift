@@ -7,11 +7,11 @@ struct InvoiceStatusBadge: View {
     var body: some View {
         let tint = AppTheme.invoiceStatusColor(status)
         Text(status.displayLabel)
-            .font(.caption2.weight(.semibold))
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
+            .font(.caption.weight(.semibold))
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
             .foregroundStyle(tint)
-            .background(tint.opacity(0.18), in: Capsule())
+            .background(tint.opacity(0.15), in: Capsule())
     }
 }
 
@@ -24,23 +24,26 @@ struct InvoiceListRowContent: View {
     let foreground: Color
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(alignment: .center) {
-                Text(invoiceNumber)
-                    .font(.headline)
-                    .foregroundStyle(foreground)
-                Spacer(minLength: 8)
-                InvoiceStatusBadge(status: status)
-            }
-            HStack(alignment: .firstTextBaseline) {
+        HStack(alignment: .center, spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(alignment: .center, spacing: 8) {
+                    Text(invoiceNumber)
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(foreground)
+                        .lineLimit(1)
+                    InvoiceStatusBadge(status: status)
+                }
                 Text(customerLine)
                     .font(.subheadline)
-                    .foregroundStyle(foreground)
-                Spacer(minLength: 8)
-                Text(totalFormatted)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(foreground)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
             }
+            Spacer(minLength: 8)
+            Text(totalFormatted)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(foreground)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
         }
     }
 }
@@ -114,69 +117,32 @@ struct InvoiceListView: View {
     }
 
     var body: some View {
-        List {
-            if focus == .all, !store.invoices.isEmpty {
-                Picker("Status", selection: Binding(
-                    get: { store.invoiceStatusFilter },
-                    set: { store.invoiceStatusFilter = $0 }
-                )) {
-                    Text("All").tag(Optional<InvoiceStatus>.none)
-                    ForEach(InvoiceStatus.allCases, id: \.self) { s in
-                        Text(s.rawValue.replacingOccurrences(of: "_", with: " ")).tag(Optional(s))
-                    }
-                }
-            }
-            if focus != .all {
-                Section {
-                    Text(focus == .overdue
-                         ? "Showing overdue invoices only"
-                         : "Showing draft and sent invoices awaiting payment")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-            }
-            if let fid = listCustomerFilterId, let c = store.customers.first(where: { $0.id == fid }) {
-                Section {
-                    HStack {
-                        Text("Showing invoices for \(c.name)")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                        Spacer()
-                        Button("Clear") {
-                            listCustomerFilterId = nil
-                        }
-                        .font(.subheadline.weight(.semibold))
-                    }
-                }
-            }
-            ForEach(displayedInvoices) { inv in
-                InvoiceListRowWithLongPressActions(
-                    invoice: inv,
-                    customerLine: customerName(inv.customerId),
-                    totalFormatted: InvoiceLogic.formatCurrency(amount: inv.total, code: store.companyProfile?.currency ?? "GBP"),
-                    foreground: listRowForeground,
-                    useValueNavigation: true,
-                    expandedInvoiceId: $expandedInvoiceId,
-                    paymentSheetInvoiceId: $paymentSheetInvoiceId,
-                    pdfShareItem: $pdfShareItem,
-                    listErrorMessage: $listErrorMessage
-                )
+        Group {
+            if displayedInvoices.isEmpty && store.invoices.isEmpty && focus == .all {
+                invoiceEmptyState
+            } else {
+                invoiceScrollContent
             }
         }
+        .background(Color(.systemGroupedBackground))
         .searchable(text: $store.invoiceSearch, prompt: "Search invoices")
         .navigationDestination(for: InvoiceDetailNavigationID.self) { route in
             InvoiceDetailView(invoiceId: route.invoiceId)
         }
         .navigationTitle(navigationTitleText)
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                NavigationLink("New") {
+                NavigationLink {
                     InvoiceEditorView(mode: .create, invoiceId: nil, onInvoiceCreated: { id in
                         previewInvoiceId = id
                         showInvoicePreview = true
                     })
+                } label: {
+                    Image(systemName: "plus")
+                        .font(.body.weight(.semibold))
                 }
+                .accessibilityLabel("New invoice")
             }
         }
         .onAppear { applyPendingCustomerFilter() }
@@ -229,6 +195,104 @@ struct InvoiceListView: View {
                         }
                 }
             }
+        }
+    }
+
+    private var invoiceEmptyState: some View {
+        VStack(spacing: 16) {
+            Spacer(minLength: 40)
+            Image(systemName: "doc.text")
+                .font(.system(size: 40, weight: .light))
+                .foregroundStyle(AppTheme.infoBlue.opacity(0.8))
+                .frame(width: 72, height: 72)
+                .background(AppTheme.infoBlue.opacity(0.1), in: Circle())
+            Text("No invoices yet")
+                .font(.title3.weight(.semibold))
+            Text("Create an invoice to bill a customer.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            NavigationLink {
+                InvoiceEditorView(mode: .create, invoiceId: nil, onInvoiceCreated: { id in
+                    previewInvoiceId = id
+                    showInvoicePreview = true
+                })
+            } label: {
+                Text("New invoice")
+                    .font(.body.weight(.semibold))
+                    .frame(maxWidth: 220)
+                    .padding(.vertical, 14)
+                    .background(AppTheme.infoBlue, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .foregroundStyle(.white)
+            }
+            .buttonStyle(.plain)
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private var invoiceScrollContent: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                if focus == .all, !store.invoices.isEmpty {
+                    Picker("Status", selection: Binding(
+                        get: { store.invoiceStatusFilter },
+                        set: { store.invoiceStatusFilter = $0 }
+                    )) {
+                        Text("All").tag(Optional<InvoiceStatus>.none)
+                        ForEach(InvoiceStatus.allCases, id: \.self) { s in
+                            Text(s.rawValue.replacingOccurrences(of: "_", with: " ")).tag(Optional(s))
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                }
+                if focus != .all {
+                    Text(focus == .overdue
+                         ? "Showing overdue invoices only"
+                         : "Showing draft and sent invoices awaiting payment")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                if let fid = listCustomerFilterId, let c = store.customers.first(where: { $0.id == fid }) {
+                    HStack {
+                        Text("Showing invoices for \(CustomerHeader.primary(c))")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        Button("Clear") { listCustomerFilterId = nil }
+                            .font(.subheadline.weight(.semibold))
+                    }
+                }
+
+                if displayedInvoices.isEmpty {
+                    Text("No matches")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 40)
+                } else {
+                    LazyVStack(spacing: 10) {
+                        ForEach(displayedInvoices) { inv in
+                            InvoiceListRowWithLongPressActions(
+                                invoice: inv,
+                                customerLine: customerName(inv.customerId),
+                                totalFormatted: InvoiceLogic.formatCurrency(amount: inv.total, code: store.companyProfile?.currency ?? "GBP"),
+                                foreground: listRowForeground,
+                                useValueNavigation: true,
+                                expandedInvoiceId: $expandedInvoiceId,
+                                paymentSheetInvoiceId: $paymentSheetInvoiceId,
+                                pdfShareItem: $pdfShareItem,
+                                listErrorMessage: $listErrorMessage
+                            )
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 12)
+                            .background(AppSurfaceCard())
+                        }
+                    }
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
+            .padding(.bottom, 24)
         }
     }
 
@@ -444,119 +508,160 @@ struct InvoiceDetailView: View {
     var body: some View {
         Group {
             if let inv = invoice {
-                List {
-                    if let profile = store.companyProfile {
-                        Section {
-                            VStack(spacing: 10) {
-                                CompanyLogoImageView(logo: profile.logo, size: 56, clipCircle: false, scaleToFit: true, showsStroke: false)
-                                    .frame(maxWidth: .infinity)
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 16) {
+                        if let profile = store.companyProfile {
+                            VStack(spacing: 8) {
+                                CompanyLogoImageView(logo: profile.logo, size: 52, clipCircle: false, scaleToFit: true, showsStroke: false)
                                 Text(profile.name)
                                     .font(.headline)
-                                    .multilineTextAlignment(.center)
                                 Text(profile.email)
                                     .font(.subheadline)
                                     .foregroundStyle(.secondary)
-                                    .multilineTextAlignment(.center)
                             }
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 3)
+                            .padding(.vertical, 4)
                         }
-                        .listRowBackground(Color.clear)
-                    }
-                    Section {
-                        HStack(alignment: .center, spacing: 12) {
-                            VStack(alignment: .leading, spacing: 4) {
+
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack {
+                                InvoiceStatusBadge(status: inv.status)
+                                Spacer()
+                                Text(formatMoney(inv.total))
+                                    .font(.title2.weight(.bold))
+                            }
+                            VStack(alignment: .leading, spacing: 2) {
                                 Text("Customer")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                                 Text(customerDisplayTitle(inv.customerId))
                                     .font(.body.weight(.semibold))
                             }
-                            Spacer(minLength: 8)
-                            Button("Payment") { showPayment = true }
-                                .buttonStyle(.borderedProminent)
-                                .tint(AppTheme.infoBlue)
-                                .disabled(inv.status == .cancelled || InvoiceLogic.isFullyPaid(inv))
-                        }
-                    }
-                    Section {
-                        LabeledContent("Date", value: shortDate(inv.date))
-                        LabeledContent("Due", value: shortDate(inv.dueDate))
-                    }
-                    Section("Line items") {
-                        ForEach(inv.items) { item in
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text(item.description)
-                                    .font(.body.weight(.medium))
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .multilineTextAlignment(.leading)
-                                HStack {
-                                    Text("\(formatQty(item.quantity)) × \(formatMoney(item.unitPrice))")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                    Spacer()
-                                    Text(formatMoney(item.amount))
-                                        .font(.subheadline.weight(.semibold))
-                                }
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                    }
-                    Section("Totals") {
-                        LabeledContent("Subtotal", value: formatMoney(inv.subtotal))
-                        LabeledContent("Tax (\(formatQty(inv.taxRate))%)", value: formatMoney(inv.tax))
-                        LabeledContent("Total", value: formatMoney(inv.total))
-                    }
-                    if let pays = inv.payments, !pays.isEmpty {
-                        Section("Payments") {
-                            ForEach(pays) { p in
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(formatMoney(p.amount)).font(.headline)
-                                    Text("\(p.method.rawValue) · \(shortDate(p.date))")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
+                            HStack {
+                                detailMeta(title: "Date", value: shortDate(inv.date))
+                                Spacer()
+                                detailMeta(title: "Due", value: shortDate(inv.dueDate))
                             }
                         }
-                    }
-                    if let n = inv.notes, !n.isEmpty { Section("Notes") { Text(n) } }
-                    if let t = inv.terms, !t.isEmpty { Section("Terms") { Text(t) } }
-                    if inv.status == .draft {
-                        Button("Mark as sent") {
-                            Task {
-                                do {
-                                    try await store.updateInvoice(id: inv.id) { $0.status = .sent }
-                                } catch {
-                                    errorMessage = error.localizedDescription
+                        .padding(16)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(AppSurfaceCard())
+
+                        HStack(spacing: 10) {
+                            Button { showPayment = true } label: {
+                                Label("Payment", systemImage: "creditcard.fill")
+                                    .font(.subheadline.weight(.semibold))
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 14)
+                                    .background(AppTheme.infoBlue, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                                    .foregroundStyle(.white)
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(inv.status == .cancelled || InvoiceLogic.isFullyPaid(inv))
+
+                            Button { prepareAndSharePDF(invoice: inv) } label: {
+                                Label("Share", systemImage: "square.and.arrow.up")
+                                    .font(.subheadline.weight(.semibold))
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 14)
+                                    .background(AppTheme.infoBlue.opacity(0.12), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                                    .foregroundStyle(AppTheme.infoBlue)
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(store.companyProfile == nil || store.customers.first(where: { $0.id == inv.customerId }) == nil)
+                        }
+
+                        detailCard(title: "Line items") {
+                            ForEach(Array(inv.items.enumerated()), id: \.element.id) { index, item in
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Text(item.description)
+                                        .font(.body.weight(.medium))
+                                    HStack {
+                                        Text("\(formatQty(item.quantity)) × \(formatMoney(item.unitPrice))")
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                        Spacer()
+                                        Text(formatMoney(item.amount))
+                                            .font(.subheadline.weight(.semibold))
+                                    }
+                                }
+                                if index < inv.items.count - 1 {
+                                    Divider().padding(.vertical, 6)
                                 }
                             }
                         }
-                        .buttonStyle(.borderedProminent)
-                        .tint(AppTheme.infoBlue)
-                    }
-                    if canEdit(inv) {
-                        NavigationLink("Edit invoice") {
-                            InvoiceEditorView(mode: .edit, invoiceId: inv.id)
+
+                        detailCard(title: "Totals") {
+                            labeledRow("Subtotal", formatMoney(inv.subtotal))
+                            labeledRow("Tax (\(formatQty(inv.taxRate))%)", formatMoney(inv.tax))
+                            labeledRow("Total", formatMoney(inv.total), emphasize: true)
+                        }
+
+                        if let pays = inv.payments, !pays.isEmpty {
+                            detailCard(title: "Payments") {
+                                ForEach(Array(pays.enumerated()), id: \.element.id) { index, p in
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(formatMoney(p.amount)).font(.headline)
+                                        Text("\(p.method.rawValue) · \(shortDate(p.date))")
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    if index < pays.count - 1 {
+                                        Divider().padding(.vertical, 6)
+                                    }
+                                }
+                            }
+                        }
+
+                        if let n = inv.notes, !n.isEmpty {
+                            detailCard(title: "Notes") { Text(n) }
+                        }
+                        if let t = inv.terms, !t.isEmpty {
+                            detailCard(title: "Terms") { Text(t) }
+                        }
+
+                        VStack(spacing: 10) {
+                            if inv.status == .draft {
+                                Button("Mark as sent") {
+                                    Task {
+                                        do {
+                                            try await store.updateInvoice(id: inv.id) { $0.status = .sent }
+                                        } catch {
+                                            errorMessage = error.localizedDescription
+                                        }
+                                    }
+                                }
+                                .buttonStyle(PrimaryFormButtonStyle())
+                            }
+                            if canEdit(inv) {
+                                NavigationLink {
+                                    InvoiceEditorView(mode: .edit, invoiceId: inv.id)
+                                } label: {
+                                    Text("Edit invoice")
+                                        .font(.body.weight(.semibold))
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 14)
+                                        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                                        .foregroundStyle(.primary)
+                                }
+                                .buttonStyle(.plain)
+                            }
+                            if inv.status == .draft && (inv.payments ?? []).isEmpty {
+                                Button("Delete", role: .destructive) {
+                                    showDeleteConfirm = true
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                            }
                         }
                     }
-                    if inv.status == .draft && (inv.payments ?? []).isEmpty {
-                        Button("Delete", role: .destructive) {
-                            showDeleteConfirm = true
-                        }
-                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                    .padding(.bottom, 32)
                 }
+                .background(Color(.systemGroupedBackground))
                 .navigationTitle(inv.invoiceNumber)
                 .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .primaryAction) {
-                        Button {
-                            prepareAndSharePDF(invoice: inv)
-                        } label: {
-                            Label("Share PDF", systemImage: "square.and.arrow.up")
-                        }
-                        .disabled(store.companyProfile == nil || store.customers.first(where: { $0.id == inv.customerId }) == nil)
-                    }
-                }
                 .sheet(isPresented: $showPayment) {
                     PaymentSheet(invoiceId: inv.id, maxRemaining: inv.total - InvoiceLogic.totalPaid(for: inv))
                 }
@@ -594,6 +699,42 @@ struct InvoiceDetailView: View {
                 }
             }
         }
+    }
+
+    private func detailMeta(title: String, value: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Text(value)
+                .font(.subheadline.weight(.medium))
+        }
+    }
+
+    private func detailCard<Content: View>(title: String, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(title)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .textCase(.uppercase)
+            VStack(alignment: .leading, spacing: 0) {
+                content()
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(14)
+            .background(AppSurfaceCard())
+        }
+    }
+
+    private func labeledRow(_ title: String, _ value: String, emphasize: Bool = false) -> some View {
+        HStack {
+            Text(title)
+                .foregroundStyle(emphasize ? .primary : .secondary)
+            Spacer()
+            Text(value)
+                .font(emphasize ? .body.weight(.bold) : .body.weight(.medium))
+        }
+        .padding(.vertical, 4)
     }
 
     private func afterSuccessfulShare() {
@@ -800,7 +941,6 @@ struct InvoiceEditorView: View {
     @State private var errorMessage: String?
     @State private var addCustomerSheet: AddCustomerSheetToken?
     @State private var showSavedItemsPicker = false
-    @State private var showVoiceInput = false
 
     struct LineRow: Identifiable {
         let id: UUID
@@ -876,11 +1016,6 @@ struct InvoiceEditorView: View {
                     lines.append(LineRow())
                 }
                 Button {
-                    showVoiceInput = true
-                } label: {
-                    Label("Add via voice", systemImage: "mic.circle.fill")
-                }
-                Button {
                     showSavedItemsPicker = true
                 } label: {
                     Label("Add from saved items", systemImage: "tray.and.arrow.down")
@@ -940,19 +1075,6 @@ struct InvoiceEditorView: View {
                 }
                 .environmentObject(store)
             }
-        }
-        .sheet(isPresented: $showVoiceInput) {
-            VoiceInputView(
-                onItemsAdded: { items in
-                    VoiceInvoiceIntegration.addVoiceItems(items, to: &lines)
-                },
-                onNoteAdded: { note in
-                    VoiceInvoiceIntegration.addVoiceNote(note, to: &notes)
-                },
-                onTaxRateChanged: { rate in
-                    VoiceInvoiceIntegration.applyVoiceTaxRate(rate, to: &taxRate)
-                }
-            )
         }
         .onAppear {
             if mode == .edit, let id = invoiceId, let inv = store.invoices.first(where: { $0.id == id }) {

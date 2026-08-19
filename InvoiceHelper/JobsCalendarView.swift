@@ -1,12 +1,10 @@
 import SwiftUI
 import UIKit
 
-/// Hosts `UICalendarView` with a vertical scale so the month grid uses less height while staying full width.
+/// Hosts `UICalendarView` at its natural aspect ratio (full width, unscaled height).
 @available(iOS 16.0, *)
 final class JobsCalendarContainerView: UIView {
     let calendarView = UICalendarView()
-    /// Visual height multiplier (e.g. 2/3 of natural month height).
-    var verticalScale: CGFloat = 2 / 3
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -24,14 +22,9 @@ final class JobsCalendarContainerView: UIView {
         let w = bounds.width
         guard w > 0 else { return }
 
-        calendarView.transform = .identity
         let naturalH = calendarView.sizeThatFits(CGSize(width: w, height: CGFloat.greatestFiniteMagnitude)).height
         let h = max(naturalH, 200)
-
-        calendarView.bounds = CGRect(x: 0, y: 0, width: w, height: h)
-        calendarView.layer.anchorPoint = CGPoint(x: 0.5, y: 0)
-        calendarView.layer.position = CGPoint(x: w / 2, y: 0)
-        calendarView.transform = CGAffineTransform(scaleX: 1, y: verticalScale)
+        calendarView.frame = CGRect(x: 0, y: 0, width: w, height: h)
     }
 }
 
@@ -41,8 +34,6 @@ struct JobsCalendarView: UIViewRepresentable {
     @Binding var selectedDate: Date?
     var markedDayStrings: Set<String>
     var calendar: Calendar
-    /// Vertical scale for layout height (default 2/3 of system month height).
-    var verticalScale: CGFloat = 2 / 3
 
     func makeCoordinator() -> Coordinator {
         Coordinator(binding: $selectedDate, calendar: calendar, markedDayStrings: markedDayStrings)
@@ -50,7 +41,6 @@ struct JobsCalendarView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> JobsCalendarContainerView {
         let container = JobsCalendarContainerView()
-        container.verticalScale = verticalScale
         let v = container.calendarView
         v.calendar = context.coordinator.calendar
         v.locale = Locale.current
@@ -66,7 +56,6 @@ struct JobsCalendarView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: JobsCalendarContainerView, context: Context) {
-        uiView.verticalScale = verticalScale
         context.coordinator.binding = $selectedDate
         context.coordinator.calendar = calendar
         context.coordinator.markedDayStrings = markedDayStrings
@@ -96,7 +85,7 @@ struct JobsCalendarView: UIViewRepresentable {
             width = fallback
         }
         let natural = uiView.calendarView.sizeThatFits(CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)).height
-        let h = max(natural, 200) * verticalScale
+        let h = max(natural, 200)
         return CGSize(width: width, height: h)
     }
 

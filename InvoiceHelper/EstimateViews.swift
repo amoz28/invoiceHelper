@@ -1,51 +1,56 @@
 import SwiftUI
 
+struct EstimateStatusBadge: View {
+    let status: EstimateStatus
+
+    var body: some View {
+        let tint = AppTheme.estimateStatusColor(status)
+        let label = status.rawValue.replacingOccurrences(of: "_", with: " ").capitalized
+        Text(label)
+            .font(.caption.weight(.semibold))
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .foregroundStyle(tint)
+            .background(tint.opacity(0.15), in: Capsule())
+    }
+}
+
 struct EstimateListView: View {
     @EnvironmentObject private var store: AppStore
+    @Environment(\.colorScheme) private var colorScheme
     @State private var previewEstimateId: String?
     @State private var showEstimatePreview = false
 
+    private var rowForeground: Color {
+        colorScheme == .light ? .black : Color.primary
+    }
+
+    private var estimates: [Estimate] { store.filteredEstimates }
+
     var body: some View {
-        List {
-            if !store.estimates.isEmpty {
-                Picker("Status", selection: Binding(
-                    get: { store.estimateStatusFilter },
-                    set: { store.estimateStatusFilter = $0 }
-                )) {
-                    Text("All").tag(Optional<EstimateStatus>.none)
-                    ForEach(EstimateStatus.allCases, id: \.self) { s in
-                        Text(s.rawValue.replacingOccurrences(of: "_", with: " ").capitalized).tag(Optional(s))
-                    }
-                }
-            }
-            ForEach(store.filteredEstimates) { est in
-                NavigationLink(destination: EstimateDetailView(estimateId: est.id)) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack {
-                            Text(est.estimateNumber).font(.headline)
-                            Spacer()
-                            Text(InvoiceLogic.formatCurrency(amount: est.total, code: store.companyProfile?.currency ?? "GBP"))
-                                .font(.subheadline)
-                        }
-                        Text(customerName(est.customerId)).font(.subheadline).foregroundStyle(.secondary)
-                        Text(est.status.rawValue.replacingOccurrences(of: "_", with: " "))
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
+        Group {
+            if estimates.isEmpty && store.estimates.isEmpty {
+                emptyState
+            } else {
+                scrollContent
             }
         }
+        .background(Color(.systemGroupedBackground))
         .searchable(text: $store.estimateSearch, prompt: "Search estimates")
         .navigationTitle("Estimates")
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                NavigationLink("New") {
+                NavigationLink {
                     EstimateEditorView(estimate: nil, onEstimateCreated: { id in
                         previewEstimateId = id
                         showEstimatePreview = true
                     })
+                } label: {
+                    Image(systemName: "plus")
+                        .font(.body.weight(.semibold))
                 }
+                .accessibilityLabel("New estimate")
             }
         }
         .refreshable { store.reloadEstimates() }
@@ -67,8 +72,104 @@ struct EstimateListView: View {
         }
     }
 
+    private var emptyState: some View {
+        VStack(spacing: 16) {
+            Spacer(minLength: 40)
+            Image(systemName: "doc.questionmark")
+                .font(.system(size: 40, weight: .light))
+                .foregroundStyle(AppTheme.pendingOrange.opacity(0.9))
+                .frame(width: 72, height: 72)
+                .background(AppTheme.pendingOrange.opacity(0.12), in: Circle())
+            Text("No estimates yet")
+                .font(.title3.weight(.semibold))
+            Text("Create an estimate to send a quote.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            NavigationLink {
+                EstimateEditorView(estimate: nil, onEstimateCreated: { id in
+                    previewEstimateId = id
+                    showEstimatePreview = true
+                })
+            } label: {
+                Text("New estimate")
+                    .font(.body.weight(.semibold))
+                    .frame(maxWidth: 220)
+                    .padding(.vertical, 14)
+                    .background(AppTheme.infoBlue, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .foregroundStyle(.white)
+            }
+            .buttonStyle(.plain)
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private var scrollContent: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                if !store.estimates.isEmpty {
+                    Picker("Status", selection: Binding(
+                        get: { store.estimateStatusFilter },
+                        set: { store.estimateStatusFilter = $0 }
+                    )) {
+                        Text("All").tag(Optional<EstimateStatus>.none)
+                        ForEach(EstimateStatus.allCases, id: \.self) { s in
+                            Text(s.rawValue.replacingOccurrences(of: "_", with: " ").capitalized).tag(Optional(s))
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                }
+
+                if estimates.isEmpty {
+                    Text("No matches")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 40)
+                } else {
+                    LazyVStack(spacing: 10) {
+                        ForEach(estimates) { est in
+                            NavigationLink(destination: EstimateDetailView(estimateId: est.id)) {
+                                HStack(alignment: .center, spacing: 12) {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        HStack(spacing: 8) {
+                                            Text(est.estimateNumber)
+                                                .font(.body.weight(.semibold))
+                                                .foregroundStyle(rowForeground)
+                                            EstimateStatusBadge(status: est.status)
+                                        }
+                                        Text(customerName(est.customerId))
+                                            .font(.subheadline)
+                                            .foregroundStyle(.secondary)
+                                            .lineLimit(1)
+                                    }
+                                    Spacer(minLength: 8)
+                                    Text(InvoiceLogic.formatCurrency(amount: est.total, code: store.companyProfile?.currency ?? "GBP"))
+                                        .font(.subheadline.weight(.semibold))
+                                        .foregroundStyle(rowForeground)
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption.weight(.semibold))
+                                        .foregroundStyle(.tertiary)
+                                }
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 14)
+                                .background(AppSurfaceCard())
+                                .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
+            .padding(.bottom, 24)
+        }
+    }
+
     private func customerName(_ id: String) -> String {
-        store.customers.first { $0.id == id }?.name ?? "Unknown"
+        guard let c = store.customers.first(where: { $0.id == id }) else { return "Unknown" }
+        return CustomerHeader.primary(c)
     }
 }
 
@@ -86,87 +187,116 @@ struct EstimateDetailView: View {
     var body: some View {
         Group {
             if let est = estimate {
-                List {
-                    if let profile = store.companyProfile {
-                        Section {
-                            HStack(alignment: .center, spacing: 14) {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 16) {
+                        if let profile = store.companyProfile {
+                            VStack(spacing: 8) {
                                 CompanyLogoImageView(logo: profile.logo, size: 52, clipCircle: false, scaleToFit: true)
-                                    .background(Color(.secondarySystemFill))
+                                Text(profile.name).font(.headline)
+                                Text(profile.email).font(.subheadline).foregroundStyle(.secondary)
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack {
+                                EstimateStatusBadge(status: est.status)
+                                Spacer()
+                                Text(formatMoney(est.total))
+                                    .font(.title2.weight(.bold))
+                            }
+                            labeled("Customer", customerName(est.customerId))
+                            labeled("Valid until", shortDate(est.validUntil))
+
+                            if est.status != .expired {
+                                Picker("Status", selection: Binding(
+                                    get: { store.estimates.first(where: { $0.id == estimateId })?.status ?? .pending },
+                                    set: { newStatus in
+                                        do {
+                                            try store.updateEstimate(id: estimateId) { $0.status = newStatus }
+                                        } catch {
+                                            errorMessage = error.localizedDescription
+                                        }
+                                    }
+                                )) {
+                                    ForEach(EstimateStatus.allCases.filter { $0 != .expired }, id: \.self) { s in
+                                        Text(s.rawValue.replacingOccurrences(of: "_", with: " ").capitalized).tag(s)
+                                    }
+                                }
+                                .pickerStyle(.segmented)
+                            }
+                        }
+                        .padding(16)
+                        .background(AppSurfaceCard())
+
+                        sectionCard(title: "Line items") {
+                            ForEach(Array(est.items.enumerated()), id: \.element.id) { index, item in
                                 VStack(alignment: .leading, spacing: 4) {
-                                    Text(profile.name).font(.headline)
-                                    Text(profile.email).font(.subheadline).foregroundStyle(.secondary)
-                                }
-                                Spacer(minLength: 0)
-                            }
-                            .padding(.vertical, 4)
-                        }
-                    }
-                    Section {
-                        if est.status == .expired {
-                            LabeledContent("Status", value: "Expired")
-                        } else {
-                            Picker("Status", selection: Binding(
-                                get: { store.estimates.first(where: { $0.id == estimateId })?.status ?? .pending },
-                                set: { newStatus in
-                                    do {
-                                        try store.updateEstimate(id: estimateId) { $0.status = newStatus }
-                                    } catch {
-                                        errorMessage = error.localizedDescription
+                                    Text(item.description).font(.body.weight(.medium))
+                                    HStack {
+                                        Text("\(formatQty(item.quantity)) × \(formatMoney(item.unitPrice))")
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                        Spacer()
+                                        Text(formatMoney(item.amount)).font(.subheadline.weight(.semibold))
                                     }
                                 }
-                            )) {
-                                ForEach(EstimateStatus.allCases.filter { $0 != .expired }, id: \.self) { s in
-                                    Text(s.rawValue.replacingOccurrences(of: "_", with: " ").capitalized).tag(s)
+                                if index < est.items.count - 1 {
+                                    Divider().padding(.vertical, 6)
                                 }
                             }
                         }
-                        LabeledContent("Customer", value: customerName(est.customerId))
-                        LabeledContent("Valid until", value: shortDate(est.validUntil))
-                    }
-                    Section("Line items") {
-                        ForEach(est.items) { item in
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(item.description).font(.headline)
-                                Text("\(formatQty(item.quantity)) × \(formatMoney(item.unitPrice))")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                Text(formatMoney(item.amount)).font(.subheadline)
-                            }
+
+                        sectionCard(title: "Totals") {
+                            moneyRow("Subtotal", formatMoney(est.subtotal))
+                            moneyRow("Tax (\(formatQty(est.taxRate))%)", formatMoney(est.tax))
+                            moneyRow("Total", formatMoney(est.total), emphasize: true)
                         }
-                    }
-                    Section("Totals") {
-                        LabeledContent("Subtotal", value: formatMoney(est.subtotal))
-                        LabeledContent("Tax (\(formatQty(est.taxRate))%)", value: formatMoney(est.tax))
-                        LabeledContent("Total", value: formatMoney(est.total))
-                    }
-                    if let n = est.notes, !n.isEmpty { Section("Notes") { Text(n) } }
-                    if est.status == .pending || est.status == .accepted {
-                        Section {
-                            Button("Create invoice from estimate") {
-                                Task {
-                                    do {
-                                        let inv = try await store.createInvoiceFromEstimate(estimateId: estimateId)
-                                        createdInvoiceId = inv.id
-                                        showCreatedInvoice = true
-                                    } catch {
-                                        errorMessage = error.localizedDescription
+
+                        if let n = est.notes, !n.isEmpty {
+                            sectionCard(title: "Notes") { Text(n) }
+                        }
+
+                        VStack(spacing: 10) {
+                            if est.status == .pending || est.status == .accepted {
+                                Button("Create invoice from estimate") {
+                                    Task {
+                                        do {
+                                            let inv = try await store.createInvoiceFromEstimate(estimateId: estimateId)
+                                            createdInvoiceId = inv.id
+                                            showCreatedInvoice = true
+                                        } catch {
+                                            errorMessage = error.localizedDescription
+                                        }
                                     }
                                 }
+                                .buttonStyle(PrimaryFormButtonStyle())
                             }
+                            NavigationLink {
+                                EstimateEditorView(estimate: est)
+                            } label: {
+                                Text("Edit estimate")
+                                    .font(.body.weight(.semibold))
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 14)
+                                    .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                                    .foregroundStyle(.primary)
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(est.status == .expired)
+
+                            Button("Delete", role: .destructive) {
+                                showDeleteConfirm = true
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
                         }
                     }
-                    Section {
-                        NavigationLink("Edit estimate") {
-                            EstimateEditorView(estimate: est)
-                        }
-                        .disabled(est.status == .expired)
-                    }
-                    Section {
-                        Button("Delete", role: .destructive) {
-                            showDeleteConfirm = true
-                        }
-                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                    .padding(.bottom, 32)
                 }
+                .background(Color(.systemGroupedBackground))
                 .navigationTitle(est.estimateNumber)
                 .navigationBarTitleDisplayMode(.inline)
             } else {
@@ -210,8 +340,40 @@ struct EstimateDetailView: View {
         }
     }
 
+    private func labeled(_ title: String, _ value: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title).font(.caption).foregroundStyle(.secondary)
+            Text(value).font(.body.weight(.semibold))
+        }
+    }
+
+    private func sectionCard<Content: View>(title: String, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(title)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .textCase(.uppercase)
+            VStack(alignment: .leading, spacing: 0) {
+                content()
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(14)
+            .background(AppSurfaceCard())
+        }
+    }
+
+    private func moneyRow(_ title: String, _ value: String, emphasize: Bool = false) -> some View {
+        HStack {
+            Text(title).foregroundStyle(emphasize ? .primary : .secondary)
+            Spacer()
+            Text(value).font(emphasize ? .body.weight(.bold) : .body.weight(.medium))
+        }
+        .padding(.vertical, 4)
+    }
+
     private func customerName(_ id: String) -> String {
-        store.customers.first { $0.id == id }?.name ?? "Unknown"
+        guard let c = store.customers.first(where: { $0.id == id }) else { return "Unknown" }
+        return CustomerHeader.primary(c)
     }
 
     private func formatMoney(_ v: Double) -> String {

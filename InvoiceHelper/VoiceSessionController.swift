@@ -65,8 +65,9 @@ final class VoiceSessionController: NSObject, ObservableObject {
     private var listenGeneration = 0
     /// Skip the post-speech pause once (barge-in should listen immediately).
     private var skipNextSpeechCooldown = false
-    /// Quiet gap after TTS so room echo is not transcribed as the user's answer.
-    private let postSpeechCooldownNanoseconds: UInt64 = 380_000_000
+    /// Quiet gap after TTS before listening. Kept at zero so the mic opens as soon as
+    /// the question finishes; echo rejection still drops self-speech.
+    private let postSpeechCooldownNanoseconds: UInt64 = 0
 
     override init() {
         super.init()
@@ -278,15 +279,16 @@ final class VoiceSessionController: NSObject, ObservableObject {
 
         let utterance = AVSpeechUtterance(string: line)
         utterance.voice = preferredVoice()
-        // Near-default rate with a slight warm tilt; premium/enhanced voices carry naturalness.
-        utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.96
-        utterance.pitchMultiplier = 1.02
-        utterance.preUtteranceDelay = 0.05
-        utterance.postUtteranceDelay = 0.05
+        // Natural male pacing — clear without sounding rushed.
+        utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.92
+        utterance.pitchMultiplier = 0.96
+        utterance.volume = 1.0
+        utterance.preUtteranceDelay = 0
+        utterance.postUtteranceDelay = 0
         synthesizer.speak(utterance)
     }
 
-    /// Prefers premium/enhanced voices for the session locale (downloadable in Settings →
+    /// Prefers premium/enhanced male English voices (downloadable in Settings →
     /// Accessibility → Spoken Content → Voices). Falls back gracefully if only compact voices exist.
     private func preferredVoice() -> AVSpeechSynthesisVoice? {
         let preferred = locale.identifier
@@ -308,23 +310,33 @@ final class VoiceSessionController: NSObject, ObservableObject {
             return -1
         }
 
+        func genderScore(_ voice: AVSpeechSynthesisVoice) -> Int {
+            switch voice.gender {
+            case .male: return 40
+            case .female: return -30
+            default: return 0
+            }
+        }
+
+        /// Prefer well-known male English voices when present.
         func nameBonus(_ name: String) -> Int {
             let n = name.lowercased()
-            var bonus = 0
-            if n.contains("siri") { bonus += 12 }
-            // Natural-sounding English voices commonly installed on iOS.
-            for hint in ["martha", "arthur", "daniel", "kate", "serena", "moira", "samantha", "aaron"] {
-                if n.contains(hint) { bonus += 8; break }
+            let maleHints = ["daniel", "arthur", "aaron", "oliver", "rishi", "tom", "james", "fred", "gordon", "lee"]
+            for hint in maleHints {
+                if n.contains(hint) { return 16 }
             }
-            return bonus
+            return 0
         }
 
         let ranked = voices.compactMap { voice -> (AVSpeechSynthesisVoice, Int)? in
             let lang = languageScore(voice.language)
             guard lang >= 0 else { return nil }
-            return (voice, lang + qualityScore(voice.quality) + nameBonus(voice.name))
+            return (voice, lang + qualityScore(voice.quality) + genderScore(voice) + nameBonus(voice.name))
         }.sorted { $0.1 > $1.1 }
 
+        if let male = ranked.first(where: { $0.0.gender == .male }) {
+            return male.0
+        }
         if let best = ranked.first { return best.0 }
         return AVSpeechSynthesisVoice(language: "en-GB")
             ?? AVSpeechSynthesisVoice(language: "en-US")
@@ -430,6 +442,13 @@ final class VoiceSessionController: NSObject, ObservableObject {
         let generation = listenGeneration
         if skipNextSpeechCooldown {
             skipNextSpeechCooldown = false
+            suppressRecognition = false
+            beginListening()
+            return
+        }
+
+        // Open the mic as soon as speech ends — no artificial pause after a question.
+        if postSpeechCooldownNanoseconds == 0 {
             suppressRecognition = false
             beginListening()
             return
